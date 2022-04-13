@@ -1,0 +1,17 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Embedded - Tag - DARK MATTER</title>
+        <link>https://keishitsuboi.github.io/tags/embedded/</link>
+        <description>Embedded - Tag - DARK MATTER</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><copyright>株式会社サイバーディフェンス研究所のエンジニアによるテックブログ</copyright><lastBuildDate>Fri, 03 Dec 2021 17:07:29 &#43;0900</lastBuildDate><atom:link href="https://keishitsuboi.github.io/tags/embedded/" rel="self" type="application/rss+xml" /><item>
+    <title>破壊・フォーマットされたUSBメモリからデータを復旧する</title>
+    <link>https://keishitsuboi.github.io/%E7%A0%B4%E5%A3%8A/</link>
+    <pubDate>Fri, 03 Dec 2021 17:07:29 &#43;0900</pubDate>
+    <author>Author</author>
+    <guid>https://keishitsuboi.github.io/%E7%A0%B4%E5%A3%8A/</guid>
+    <description><![CDATA[<div class="featured-image">
+                <img src="/nand_controller.jpg" referrerpolicy="no-referrer">
+            </div><p>こんにちは、技術部の手島です。
+弊社では、脆弱性診断サービスの１つとして組み込み機器診断を行っていますが、その作業の一つとして記憶媒体からファームウェアを読み出す作業があります。この目的で弊社ではデータ復旧装置を保有しており、技能維持トレーニングを行っている様子を紹介します。</p>]]></description>
+</item></channel>
+</rss>

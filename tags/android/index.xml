@@ -1,0 +1,17 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Android - Tag - DARK MATTER</title>
+        <link>https://keishitsuboi.github.io/tags/android/</link>
+        <description>Android - Tag - DARK MATTER</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><copyright>株式会社サイバーディフェンス研究所のエンジニアによるテックブログ</copyright><lastBuildDate>Tue, 03 Aug 2021 18:02:06 &#43;0900</lastBuildDate><atom:link href="https://keishitsuboi.github.io/tags/android/" rel="self" type="application/rss+xml" /><item>
+    <title>ファイルベースの暗号化（FBE）されたAndroid10のエミュレータの/data/data/領域をPCで復号してみる</title>
+    <link>https://keishitsuboi.github.io/android10/</link>
+    <pubDate>Tue, 03 Aug 2021 18:02:06 &#43;0900</pubDate>
+    <author>Author</author>
+    <guid>https://keishitsuboi.github.io/android10/</guid>
+    <description><![CDATA[<div class="featured-image">
+                <img src="/dark_matter.png" referrerpolicy="no-referrer">
+            </div><p><a href="https://source.android.com/security/encryption/file-based?hl=ja" target="_blank" rel="noopener noreffer">ファイルベースの暗号化</a>の説明にある通り、Android7.0以降ではファイルベースの暗号化（FBE）がサポートされています。Android10の/data/data/領域（最初のユーザーのアプリストレージ）もFBEで暗号化されています。FBEによる暗号化はスクリーンロック設定の有無に関わらず行われていますが、スクリーンロック設定が無い方が復号に必要な情報が少なくなります。</p>
+<p>スクリーンロック設定が無いAndroid10のエミュレータから/data/data/に該当する領域をダンプし、PC（Linux）で復号を試みたところ成功しました。本稿では使用した環境とその手順について記載します。</p>]]></description>
+</item></channel>
+</rss>

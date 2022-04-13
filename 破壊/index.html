@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>破壊・フォーマットされたUSBメモリからデータを復旧する - DARK MATTER</title><meta name="Description" content="株式会社サイバーディフェンス研究所のエンジニアによるテックブログ"><meta property="og:title" content="破壊・フォーマットされたUSBメモリからデータを復旧する" />
+<meta property="og:description" content="こんにちは、技術部の手島です。
+弊社では、脆弱性診断サービスの１つとして組み込み機器診断を行っていますが、その作業の一つとして記憶媒体からファームウェアを読み出す作業があります。この目的で弊社ではデータ復旧装置を保有しており、技能維持トレーニングを行っている様子を紹介します。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://keishitsuboi.github.io/%E7%A0%B4%E5%A3%8A/" /><meta property="og:image" content="https://keishitsuboi.github.io/images/dark_matter_logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-12-03T17:07:29+09:00" />
+<meta property="article:modified_time" content="2022-12-03T17:07:29+09:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://keishitsuboi.github.io/images/dark_matter_logo.png"/>
+
+<meta name="twitter:title" content="破壊・フォーマットされたUSBメモリからデータを復旧する"/>
+<meta name="twitter:description" content="こんにちは、技術部の手島です。
+弊社では、脆弱性診断サービスの１つとして組み込み機器診断を行っていますが、その作業の一つとして記憶媒体からファームウェアを読み出す作業があります。この目的で弊社ではデータ復旧装置を保有しており、技能維持トレーニングを行っている様子を紹介します。"/>
+<meta name="application-name" content="DARK MATTER">
+<meta name="apple-mobile-web-app-title" content="DARK MATTER"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="https://keishitsuboi.github.io/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="https://keishitsuboi.github.io/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="https://keishitsuboi.github.io/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="https://keishitsuboi.github.io/apple-touch-icon.png"><link rel="mask-icon" href="https://keishitsuboi.github.io/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="https://keishitsuboi.github.io/site.webmanifest"><link rel="canonical" href="https://keishitsuboi.github.io/%E7%A0%B4%E5%A3%8A/" /><link rel="prev" href="https://keishitsuboi.github.io/android10/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="https://keishitsuboi.github.io/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "破壊・フォーマットされたUSBメモリからデータを復旧する",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/keishitsuboi.github.io\/%E7%A0%B4%E5%A3%8A\/"
+        },"image": ["https:\/\/keishitsuboi.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "Embedded, IoT","wordcount":  71 ,
+        "url": "https:\/\/keishitsuboi.github.io\/%E7%A0%B4%E5%A3%8A\/","datePublished": "2021-12-03T17:07:29+09:00","dateModified": "2022-12-03T17:07:29+09:00","license": "株式会社サイバーディフェンス研究所のエンジニアによるテックブログ","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": "https:\/\/keishitsuboi.github.io\/images\/dark_matter_logo.png"},"author": {
+                "@type": "Person",
+                "name": "teshima"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('dark' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'dark' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="https://keishitsuboi.github.io/" title="DARK MATTER">DARK MATTER</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="https://keishitsuboi.github.io/posts/"> 記事一覧 </a><a class="menu-item" href="https://keishitsuboi.github.io/tags/"> タグ </a><a class="menu-item" href="https://keishitsuboi.github.io/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="https://keishitsuboi.github.io/" title="DARK MATTER">DARK MATTER</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="https://keishitsuboi.github.io/posts/" title="">記事一覧</a><a class="menu-item" href="https://keishitsuboi.github.io/tags/" title="">タグ</a><a class="menu-item" href="https://keishitsuboi.github.io/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a><a href="javascript:void(0);" class="menu-item" title="Select Language">English<i class="fas fa-chevron-right fa-fw"></i>
+                    <select class="language-select" onchange="location = this.value;"><option value="/%E7%A0%B4%E5%A3%8A/" selected>English</option></select>
+                </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">破壊・フォーマットされたUSBメモリからデータを復旧する</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://keishitsuboi.github.io/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>teshima</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-12-03">2021-12-03</time>&nbsp;<span id="/%E7%A0%B4%E5%A3%8A/" class="leancloud_visitors" data-flag-title="破壊・フォーマットされたUSBメモリからデータを復旧する">
+                        <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;views
+                    </span>&nbsp;</div>
+        </div><div class="featured-image"><img
+        class="lazyload"
+        src="https://keishitsuboi.github.io/svg/loading.min.svg"
+        data-src="nand_controller.jpg"
+        data-srcset="https://keishitsuboi.github.io/%E7%A0%B4%E5%A3%8A/nand_controller.jpg, nand_controller.jpg 1.5x, https://keishitsuboi.github.io/%E7%A0%B4%E5%A3%8A/nand_controller.jpg 2x"
+        data-sizes="auto"
+        alt="/%E7%A0%B4%E5%A3%8A/nand_controller.jpg"
+        title="/%E7%A0%B4%E5%A3%8A/nand_controller.jpg" /></div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#今回はなにするの">今回はなにするの？</a></li>
+    <li><a href="#準備">準備</a></li>
+    <li><a href="#1クイックフォーマットしたusbメモリのデータ復旧">1:クイックフォーマットしたUSBメモリのデータ復旧</a></li>
+    <li><a href="#2-通常のフォーマットをしたusbメモリデータ復旧">2: 通常のフォーマットをしたUSBメモリ　データ復旧</a></li>
+    <li><a href="#まとめ">まとめ</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p>こんにちは、技術部の手島です。
+弊社では、脆弱性診断サービスの１つとして組み込み機器診断を行っていますが、その作業の一つとして記憶媒体からファームウェアを読み出す作業があります。この目的で弊社ではデータ復旧装置を保有しており、技能維持トレーニングを行っている様子を紹介します。</p>
+<h2 id="今回はなにするの">今回はなにするの？</h2>
+<p>データ復旧の技能維持トレーニングとして、NANDフラッシュメモリを使用した記憶媒体を破棄する際に、データ消去が不適切な場合には残ったデータがどう見えるのか、実際にUSBメモリを用いて検証してみます。</p>
+<figure><img src="./nand_controller.jpg"/>
+</figure>
+
+<p>このようにNANDコントローラが破損・破壊されたという前提で、USBメモリをデータ復旧させます。この状態で生存しているのは裏側のNANDフラッシュメモリのみです。</p>
+<figure><img src="./nand_flash?emory.jpg"/>
+</figure>
+
+<h2 id="準備">準備</h2>
+<p>実験台として、秋葉原で8GBの容量のUSBメモリをいくつか購入しました。今回は、予め内容が分かっているファイルをUSBメモリに保存し、Windows OSのフォーマット機能である「クイックフォーマット」と「(通常の)フォーマット」を行い、</p>
+<ul>
+<li>ファイルシステム上のファイル有無</li>
+<li>フラッシュメモリ上の残存</li>
+<li>データ復旧の可否</li>
+</ul>
+<p>を検証していきます。</p>
+<p>なお、今回は私のデータ復旧トレーニングを兼ねているため、あえてddコマンド等ではなく、NANDコントローラが破損しているという前提で読み出しとデータ復旧をしています。</p>
+<figure><img src="nand_2.jpg"/>
+</figure>
+
+<p>こちらが書き込んだファイル類と書き込み先のフォルダです。USBメモリには、MP3形式の音楽ファイル、PDFファイル、Microsoft Office系のWord、Excel用のファイル、JPG形式の画像ファイルを各5つ程度保存しました。フォルダ名もあえて分かりやすく番号を振って命名しています。</p>
+<p>各ファイルは、音楽ファイルは甘茶の音楽工房様、PDF、Excelファイルは経済産業省の資源・エネルギー統計、Wordファイルは警視庁の車庫証明申請書等を利用させていただきました。お礼を申し上げます。</p>
+<p>甘茶の音楽工房
+<a href="https://amachamusic.chagasi.com/" target="_blank" rel="noopener noreffer">https://amachamusic.chagasi.com/</a></p>
+<p>資源・エネルギー統計等 経済産業省
+<a href="https://www.enecho.meti.go.jp/statistics/petroleum_and_lpgas/oil_general/" target="_blank" rel="noopener noreffer">https://www.enecho.meti.go.jp/statistics/petroleum_and_lpgas/oil_general/</a></p>
+<p>保管場所証明申請手続　警視庁
+<a href="https://www.keishicho.metro.tokyo.lg.jp/tetsuzuki/kotsu/hokan/syako_tetsuzuki/jidousha_syomei.html" target="_blank" rel="noopener noreffer">https://www.keishicho.metro.tokyo.lg.jp/tetsuzuki/kotsu/hokan/syako_tetsuzuki/jidousha_syomei.html</a></p>
+<p><figure><img src="nand3.jpg"/>
+</figure>
+
+ファイルを保存したので、1つ目のUSBメモリをクイックフォーマットします。クイックフォーマットは2秒足らずで終わります。これでひとまず準備は終わりました。</p>
+<h2 id="1クイックフォーマットしたusbメモリのデータ復旧">1:クイックフォーマットしたUSBメモリのデータ復旧</h2>
+<figure><img src="USB1.jpg"/>
+</figure>
+
+<figure><img src="USB2.jpg"/>
+</figure>
+
+<p>早速USBメモリを解体して基板のみを取り出し、搭載されているICの役割を写真に記載しました。この基板は、NANDフラッシュメモリを2個搭載することができるようです。これは私の憶測ですが、NANDフラッシュメモリ1枚のみ搭載した低価格品から大容量のハイエンド品まで対応できることを狙った設計でしょうか。</p>
+<p>NANDコントローラはPHISON社のPS2251-07、NANDフラッシュメモリは刻印からはメーカーと型番が分かりませんでした。NANDフラッシュメモリには固有のIDを返答する仕組みが備わっているため、データ復旧装置から「お前誰やねん」と聞くと、「ワシは ○○社製の ▲▲やで」と教えてくれますので、NANDフラッシュメモリはメーカーが分からなくても問題ありません。</p>
+<figure><img src="usb_read.jpg"/>
+</figure>
+
+<p>試しに読み取り装置にかけてみると、このNANDフラッシュメモリは東芝製の TC58TEG6DDJTA00 とのことです。パッケージに刻印が無いため、NANDフラッシュメモリが返答してきた型番（デバイスID）が本当に正しいのかは不明です。型番と合致しているか判定するためには、パッケージをレーザーなどで開封し、ダイを露出させ、信頼できる仕入元から入手した正規品と比較しなければ分かりません。パッケージ表面に東芝メモリの刻印が無い理由も不明です。このNANDフラッシュメモリはどのような流通経路を辿ってきたのでしょうね。</p>
+<p>不思議なNANDフラッシュメモリは今回の本質ではないので、気にせずデータ復旧に取り掛かりましょう。</p>
+<figure><img src="memory1.jpg"/>
+</figure>
+
+<p>NANDフラッシュメモリ内のデータをイメージとして俯瞰して見ると、一部に何かが残っているように見えますが、ファイルヘッダ等には見えません。調査をしてみると、このNANDコントローラはデータを特定のパターンでXORしながら、複数のブロックの、複数のページへ、並列に書き込むことが分かり、段々とファイルの一部が復元できるようになってきました。</p>
+<figure><img src="memory2.jpg"/>
+</figure>
+
+<p>途中のデータ内から「Microsoft Office Word」の文字が見えました。データ復旧装置での作業は省略しますが、このように少しずつ手順を踏んでファイルを復元していきます。この後、NANDコントローラがNANDフラッシュメモリにどう書き込むのか判明したため、復旧が完了しました。ファイルシステムを復元します。</p>
+<figure><img src="memory3.jpg"/>
+</figure>
+
+<p>ファイルシステム上ではファイルが残っていないように見え、これはクイックフォーマットによるものです。本当にデータは消えているのでしょうか。ファイルシステムのFATに頼らず、フラッシュメモリ全体を調査したのが以下の画面です。</p>
+<figure><img src="memory4.jpg"/>
+</figure>
+
+<figure><img src="memory5.jpg"/>
+</figure>
+
+<p>ファイルが残存していることが分かります。クイックフォーマットでは、FATテーブルが削除されただけです。NANDフラッシュメモリ全体からデータが残っていないか探すと、先ほど保存したデータが全て復元できました。</p>
+<p>厚い本に例えると、本文であるファイルをどこに書いたのか記録した「目次」がFATテーブルであり、クイックフォーマットは目次を白紙にしただけです。ファイルが消えているように見えるのは目次が白紙になっているためで、本をめくり続けると本文が読める、というような感覚です。記憶媒体を廃棄する際、クイックフォーマットだけだとデータ消去としては不適切なのが分かりますね。</p>
+<p>1:クイックフォーマットしたUSBメモリのまとめ</p>
+<ul>
+<li>ファイルシステム上のファイル有無：無し</li>
+<li>フラッシュメモリ上の残存：あり</li>
+<li>データ復旧の可否：可能</li>
+</ul>
+<p>FATテーブルが削除されただけであり、フラッシュメモリ上にデータは残っている。</p>
+<h2 id="2-通常のフォーマットをしたusbメモリデータ復旧">2: 通常のフォーマットをしたUSBメモリ　データ復旧</h2>
+<p>では、クイックフォーマットではない通常のフォーマットではどうでしょうか。Windowsが行う通常のフォーマットは、全て 0 を書き込むそうです。</p>
+<figure><img src="quick_format.jpg"/>
+</figure>
+
+<p>先ほどと同様にファイルをUSBメモリに保存し、「クイックフォーマット」のチェックを外してフォーマットします。完了するまで約4分半かかりました。先ほどと同様にNANDフラッシュメモリを取り外し、中身を確認していきます。</p>
+<figure><img src="quick_format2.jpg"/>
+</figure>
+
+<p>同じようにデータ復旧しますが、何のファイルも見つかりません。あるのはマスターブートレコードのみです。</p>
+<figure><img src="quick_format3.jpg"/>
+</figure>
+
+<p>イメージにして俯瞰しても先ほどと違って真っ白です。データは何も残っておらず、ずっと 0 が書き込まれています。クイックではない通常のフォーマットでは、目次のFATテーブルも本文も全て白紙にしていることが分かりました。</p>
+<p>2:通常のフォーマットをしたUSBメモリのまとめ</p>
+<pre><code>ファイルシステム上のファイル有無：無し
+フラッシュメモリ上の残存：無し
+データ復旧の可否：不可能
+</code></pre>
+<p>FATテーブル、MBR、バッドブロックを除いたフラッシュメモリ全体に渡って0が書き込まれており、データは残っていない。</p>
+<h2 id="まとめ">まとめ</h2>
+<p>今回の検証で、読んでいただいた方に「クイックフォーマットではデータは残る」ということが伝わればうれしいです。記憶媒体を廃棄する際は、データの消去方式にはいくつか方法がありますが、少なくともクイックフォーマットではない「通常のフォーマット」はある程度の効果がありそうです。（本表現は効果の保証をするものではありません。適切な処理が求められる場合にはデータ消去の専門業者さんへご依頼下さい。）また、USBメモリ内のNANDフラッシュメモリを物理破壊することも効果的です。弊社の社内規定では、記憶媒体を廃棄する際にはデータの論理削除後に物理破壊することが必須と規定されています。</p>
+<p>ICの物理破壊時も、どのICを破壊してもよいわけではなく、適切なICを確実に破壊しなければいけません。今回は下の写真のようにNANDコントローラが破壊された前提で行いましたが、これではデータ復旧が可能でしたね。</p>
+<figure><img src="nand_controller2.jpg"/>
+</figure>
+
+<p>データはこちらのNANDフラッシュメモリに保存されているので、NANDコントローラではなくこちらを確実に破壊しなければいけません。</p>
+<figure><img src="nand_flash_memory.jpg"/>
+</figure>
+
+<p>今回搭載されていたNANDフラッシュメモリはTSOP48という形状のものですが、他にもNANDフラッシュメモリには、ICのピンが出ていない表面実装品のBGA63等、いくつか形状違いのものがあります。</p>
+<figure><img src="bga63.jpg"/>
+</figure>
+
+<p>BGA63パッケージの例、写真はDigikey.comより</p>
+<p><a href="https://www.digikey.com/en/products/detail/kioxia-america-inc/TH58NYG2S3HBAI4/8638959" target="_blank" rel="noopener noreffer">https://www.digikey.com/en/products/detail/kioxia-america-inc/TH58NYG2S3HBAI4/8638959</a></p>
+<p>また、クイックフォーマットは使用するべきではないかというとそうではありません。NANDフラッシュメモリには書き込みできる回数の寿命があるため、不必要な書き込みを行わないクイックフォーマットには大きな利点があります。（私も普段使用しているUSBメモリ等はクイックフォーマットです。）</p>
+<p>最後まで読んでいただきありがとうございました。</p></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-12-03</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="https://keishitsuboi.github.io/%E7%A0%B4%E5%A3%8A/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://keishitsuboi.github.io/%E7%A0%B4%E5%A3%8A/" data-title="破壊・フォーマットされたUSBメモリからデータを復旧する" data-via="cyberdefense_jp" data-hashtags="Embedded,IoT"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://keishitsuboi.github.io/%E7%A0%B4%E5%A3%8A/" data-hashtag="Embedded"><i class="fab fa-facebook-square fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="https://keishitsuboi.github.io/tags/embedded/">Embedded</a>,&nbsp;<a href="https://keishitsuboi.github.io/tags/iot/">IoT</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="https://keishitsuboi.github.io/">Home</a></span>
+        </section>
+    </div>
+
+
+    <div class="post-nav"><a href="https://keishitsuboi.github.io/android10/" class="prev" rel="prev" title="ファイルベースの暗号化（FBE）されたAndroid10のエミュレータの/data/data/領域をPCで復号してみる"><i class="fas fa-angle-left fa-fw"></i>ファイルベースの暗号化（FBE）されたAndroid10のエミュレータの/data/data/領域をPCで復号してみる</a></div>
+</div>
+<div id="comments"><div id="disqus_thread" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://disqus.com/?ref_noscript">Disqus</a>.
+            </noscript><div id="gitalk" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
+            </noscript><div id="valine" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript><div id="commento"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://commento.io/">Commento</a>.
+            </noscript><div id="utterances"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2016 - 2022</span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://www.cyberdefense.jp/" target="_blank">株式会社サイバーディフェンス研究所｜Cyber Defense Institute Inc.</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.min.css"><link rel="stylesheet" href="https://keishitsuboi.github.io/lib/valine/valine.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.2.0/dist/css/lightgallery.min.css"><script type="text/javascript" src="https://.disqus.com/embed.js" defer></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script><script type="text/javascript" src="https://cdn.commento.io/js/commento.js" defer></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.2.0/dist/js/lightgallery.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lg-thumbnail.js@1.2.0/dist/lg-thumbnail.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lg-zoom.js@1.2.0/dist/lg-zoom.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":10},"comment":{"gitalk":{"admin":[""],"clientID":"","clientSecret":"","id":"2021-12-03T17:07:29+09:00","owner":"","repo":"","title":"破壊・フォーマットされたUSBメモリからデータを復旧する"},"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":""},"valine":{"appId":"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI","appKey":"WBmoGyJtbqUswvfLh6L8iEBr","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":false,"highlight":true,"lang":"en","pageSize":10,"placeholder":"Your comment ...","recordIP":true,"serverURLs":"https://leancloud.hugoloveit.com","visitor":true}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.en","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"algolia"}};</script><script type="text/javascript" src="https://keishitsuboi.github.io/js/theme.min.js"></script></body>
+</html>

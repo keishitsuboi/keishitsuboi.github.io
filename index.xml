@@ -1,51 +1,40 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>LoveIt</title>
-        <link>https://example.com/</link>
-        <description>About LoveIt Theme</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Fri, 06 Mar 2020 21:29:01 &#43;0800</lastBuildDate>
-            <atom:link href="https://example.com/index.xml" rel="self" type="application/rss+xml" />
+        <title>DARK MATTER</title>
+        <link>https://keishitsuboi.github.io/</link>
+        <description>株式会社サイバーディフェンス研究所のエンジニアによるテックブログ</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><copyright>株式会社サイバーディフェンス研究所のエンジニアによるテックブログ</copyright><lastBuildDate>Fri, 03 Dec 2021 17:07:29 &#43;0900</lastBuildDate>
+            <atom:link href="https://keishitsuboi.github.io/index.xml" rel="self" type="application/rss+xml" />
         <item>
-    <title>Theme Documentation - Basics</title>
-    <link>https://example.com/theme-documentation-basics/</link>
-    <pubDate>Fri, 06 Mar 2020 21:29:01 &#43;0800</pubDate>
+    <title>破壊・フォーマットされたUSBメモリからデータを復旧する</title>
+    <link>https://keishitsuboi.github.io/%E7%A0%B4%E5%A3%8A/</link>
+    <pubDate>Fri, 03 Dec 2021 17:07:29 &#43;0900</pubDate>
     <author>Author</author>
-    <guid>https://example.com/theme-documentation-basics/</guid>
-    <description><![CDATA[<p>Discover what the Hugo - <strong>LoveIt</strong> theme is all about and the core-concepts behind it.</p>]]></description>
+    <guid>https://keishitsuboi.github.io/%E7%A0%B4%E5%A3%8A/</guid>
+    <description><![CDATA[<div class="featured-image">
+                <img src="/nand_controller.jpg" referrerpolicy="no-referrer">
+            </div><p>こんにちは、技術部の手島です。
+弊社では、脆弱性診断サービスの１つとして組み込み機器診断を行っていますが、その作業の一つとして記憶媒体からファームウェアを読み出す作業があります。この目的で弊社ではデータ復旧装置を保有しており、技能維持トレーニングを行っている様子を紹介します。</p>]]></description>
 </item><item>
-    <title>Theme Documentation - Content</title>
-    <link>https://example.com/theme-documentation-content/</link>
-    <pubDate>Thu, 05 Mar 2020 15:58:26 &#43;0800</pubDate>
+    <title>ファイルベースの暗号化（FBE）されたAndroid10のエミュレータの/data/data/領域をPCで復号してみる</title>
+    <link>https://keishitsuboi.github.io/android10/</link>
+    <pubDate>Tue, 03 Aug 2021 18:02:06 &#43;0900</pubDate>
     <author>Author</author>
-    <guid>https://example.com/theme-documentation-content/</guid>
-    <description><![CDATA[<p>Find out how to create and organize your content quickly and intuitively in <strong>LoveIt</strong> theme.</p>]]></description>
+    <guid>https://keishitsuboi.github.io/android10/</guid>
+    <description><![CDATA[<div class="featured-image">
+                <img src="/dark_matter.png" referrerpolicy="no-referrer">
+            </div><p><a href="https://source.android.com/security/encryption/file-based?hl=ja" target="_blank" rel="noopener noreffer">ファイルベースの暗号化</a>の説明にある通り、Android7.0以降ではファイルベースの暗号化（FBE）がサポートされています。Android10の/data/data/領域（最初のユーザーのアプリストレージ）もFBEで暗号化されています。FBEによる暗号化はスクリーンロック設定の有無に関わらず行われていますが、スクリーンロック設定が無い方が復号に必要な情報が少なくなります。</p>
+<p>スクリーンロック設定が無いAndroid10のエミュレータから/data/data/に該当する領域をダンプし、PC（Linux）で復号を試みたところ成功しました。本稿では使用した環境とその手順について記載します。</p>]]></description>
 </item><item>
-    <title>Theme Documentation - Built-in Shortcodes</title>
-    <link>https://example.com/theme-documentation-built-in-shortcodes/</link>
-    <pubDate>Wed, 04 Mar 2020 16:29:41 &#43;0800</pubDate>
+    <title>Kali LinuxでBitLocker ~やってみる編 ~</title>
+    <link>https://keishitsuboi.github.io/bitlocker/</link>
+    <pubDate>Mon, 26 Oct 2020 21:29:01 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>https://example.com/theme-documentation-built-in-shortcodes/</guid>
-    <description><![CDATA[<p><strong>Hugo</strong> provides multiple built-in shortcodes for author convenience and to keep your markdown content clean.</p>]]></description>
-</item><item>
-    <title>Theme Documentation - Extended Shortcodes</title>
-    <link>https://example.com/theme-documentation-extended-shortcodes/</link>
-    <pubDate>Tue, 03 Mar 2020 16:29:41 &#43;0800</pubDate>
-    <author>Author</author>
-    <guid>https://example.com/theme-documentation-extended-shortcodes/</guid>
-    <description><![CDATA[<p><strong>LoveIt</strong> theme provides multiple shortcodes on top of built-in ones in Hugo.</p>]]></description>
-</item><item>
-    <title>Basic Markdown Syntax</title>
-    <link>https://example.com/basic-markdown-syntax/</link>
-    <pubDate>Sun, 01 Dec 2019 21:57:40 &#43;0800</pubDate>
-    <author>Author</author>
-    <guid>https://example.com/basic-markdown-syntax/</guid>
-    <description><![CDATA[<p>This article offers a sample of basic Markdown syntax that can be used in Hugo content files.</p>]]></description>
-</item><item>
-    <title>Emoji Support</title>
-    <link>https://example.com/emoji-support/</link>
-    <pubDate>Tue, 01 Oct 2019 17:55:28 &#43;0800</pubDate>
-    <author>Author</author>
-    <guid>https://example.com/emoji-support/</guid>
-    <description><![CDATA[<p>Emoji can be enabled in a Hugo project in a number of ways.</p>]]></description>
+    <guid>https://keishitsuboi.github.io/bitlocker/</guid>
+    <description><![CDATA[<div class="featured-image">
+                <img src="/bitlocker/bitlocker1.png" referrerpolicy="no-referrer">
+            </div><p>Windows の BitLocker、Linux ユーザーにはとてもうらやましいですよね。
+Trusted Platform Module（TPM）が搭載された PC なら手軽にディスクを暗号化できて、パスフレーズ入力無しで OS 起動できて。
+そんな Windows のうらやま機能を Kali Linux でやっていきます。</p>]]></description>
 </item></channel>
 </rss>

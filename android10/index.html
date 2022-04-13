@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>ファイルベースの暗号化（FBE）されたAndroid10のエミュレータの/data/data/領域をPCで復号してみる - DARK MATTER</title><meta name="Description" content="株式会社サイバーディフェンス研究所のエンジニアによるテックブログ"><meta property="og:title" content="ファイルベースの暗号化（FBE）されたAndroid10のエミュレータの/data/data/領域をPCで復号してみる" />
+<meta property="og:description" content="ファイルベースの暗号化の説明にある通り、Android7.0以降ではファイルベースの暗号化（FBE）がサポートされています。Android10の/data/data/領域（最初のユーザーのアプリストレージ）もFBEで暗号化されています。FBEによる暗号化はスクリーンロック設定の有無に関わらず行われていますが、スクリーンロック設定が無い方が復号に必要な情報が少なくなります。
+スクリーンロック設定が無いAndroid10のエミュレータから/data/data/に該当する領域をダンプし、PC（Linux）で復号を試みたところ成功しました。本稿では使用した環境とその手順について記載します。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://keishitsuboi.github.io/android10/" /><meta property="og:image" content="https://keishitsuboi.github.io/images/dark_matter_logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-08-03T18:02:06+09:00" />
+<meta property="article:modified_time" content="2021-08-03T18:02:06+09:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://keishitsuboi.github.io/images/dark_matter_logo.png"/>
+
+<meta name="twitter:title" content="ファイルベースの暗号化（FBE）されたAndroid10のエミュレータの/data/data/領域をPCで復号してみる"/>
+<meta name="twitter:description" content="ファイルベースの暗号化の説明にある通り、Android7.0以降ではファイルベースの暗号化（FBE）がサポートされています。Android10の/data/data/領域（最初のユーザーのアプリストレージ）もFBEで暗号化されています。FBEによる暗号化はスクリーンロック設定の有無に関わらず行われていますが、スクリーンロック設定が無い方が復号に必要な情報が少なくなります。
+スクリーンロック設定が無いAndroid10のエミュレータから/data/data/に該当する領域をダンプし、PC（Linux）で復号を試みたところ成功しました。本稿では使用した環境とその手順について記載します。"/>
+<meta name="application-name" content="DARK MATTER">
+<meta name="apple-mobile-web-app-title" content="DARK MATTER"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="https://keishitsuboi.github.io/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="https://keishitsuboi.github.io/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="https://keishitsuboi.github.io/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="https://keishitsuboi.github.io/apple-touch-icon.png"><link rel="mask-icon" href="https://keishitsuboi.github.io/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="https://keishitsuboi.github.io/site.webmanifest"><link rel="canonical" href="https://keishitsuboi.github.io/android10/" /><link rel="prev" href="https://keishitsuboi.github.io/bitlocker/" /><link rel="next" href="https://keishitsuboi.github.io/%E7%A0%B4%E5%A3%8A/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="https://keishitsuboi.github.io/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "ファイルベースの暗号化（FBE）されたAndroid10のエミュレータの/data/data/領域をPCで復号してみる",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/keishitsuboi.github.io\/android10\/"
+        },"image": ["https:\/\/keishitsuboi.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "Android","wordcount":  870 ,
+        "url": "https:\/\/keishitsuboi.github.io\/android10\/","datePublished": "2021-08-03T18:02:06+09:00","dateModified": "2021-08-03T18:02:06+09:00","license": "株式会社サイバーディフェンス研究所のエンジニアによるテックブログ","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": "https:\/\/keishitsuboi.github.io\/images\/dark_matter_logo.png"},"author": {
+                "@type": "Person",
+                "name": "Nagaoka"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('dark' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'dark' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="https://keishitsuboi.github.io/" title="DARK MATTER">DARK MATTER</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="https://keishitsuboi.github.io/posts/"> 記事一覧 </a><a class="menu-item" href="https://keishitsuboi.github.io/tags/"> タグ </a><a class="menu-item" href="https://keishitsuboi.github.io/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="https://keishitsuboi.github.io/" title="DARK MATTER">DARK MATTER</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="https://keishitsuboi.github.io/posts/" title="">記事一覧</a><a class="menu-item" href="https://keishitsuboi.github.io/tags/" title="">タグ</a><a class="menu-item" href="https://keishitsuboi.github.io/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a><a href="javascript:void(0);" class="menu-item" title="Select Language">English<i class="fas fa-chevron-right fa-fw"></i>
+                    <select class="language-select" onchange="location = this.value;"><option value="/android10/" selected>English</option></select>
+                </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">ファイルベースの暗号化（FBE）されたAndroid10のエミュレータの/data/data/領域をPCで復号してみる</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://keishitsuboi.github.io/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Nagaoka</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-08-03">2021-08-03</time>&nbsp;<span id="/android10/" class="leancloud_visitors" data-flag-title="ファイルベースの暗号化（FBE）されたAndroid10のエミュレータの/data/data/領域をPCで復号してみる">
+                        <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;views
+                    </span>&nbsp;</div>
+        </div><div class="featured-image"><img
+        class="lazyload"
+        src="https://keishitsuboi.github.io/svg/loading.min.svg"
+        data-src="dark_matter.png"
+        data-srcset="https://keishitsuboi.github.io/android10/dark_matter.png, dark_matter.png 1.5x, https://keishitsuboi.github.io/android10/dark_matter.png 2x"
+        data-sizes="auto"
+        alt="/android10/dark_matter.png"
+        title="/android10/dark_matter.png" /></div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#1手順の概要">1.手順の概要</a></li>
+    <li><a href="#2使用した環境">2.使用した環境</a>
+      <ul>
+        <li><a href="#21-pc">2.1 PC</a></li>
+        <li><a href="#22-androidのエミュレータ">2.2 Androidのエミュレータ</a></li>
+        <li><a href="#ビルド環境">ビルド環境</a></li>
+      </ul>
+    </li>
+    <li><a href="#コマンドの実行例の表記について">コマンドの実行例の表記について</a></li>
+    <li><a href="#手順1-android10のエミュレータから復号対象のデータをダンプ">手順1. Android10のエミュレータから、復号対象のデータをダンプ</a>
+      <ul>
+        <li><a href="#fbeで暗号化されているか確認">FBEで暗号化されているか確認</a></li>
+        <li><a href="#ダンプ対象の確認">ダンプ対象の確認</a></li>
+        <li><a href="#データのダンプ">データのダンプ</a></li>
+        <li><a href="#ダンプしたデータの確認">ダンプしたデータの確認</a></li>
+        <li><a href="#ダンプしたデータのマウント">ダンプしたデータのマウント</a></li>
+      </ul>
+    </li>
+    <li><a href="#手順2-android10のエミュレータから復号用の鍵をダンプ">手順2. Android10のエミュレータから、復号用の鍵をダンプ</a>
+      <ul>
+        <li><a href="#ソースコードのダウンロード">ソースコードのダウンロード</a></li>
+        <li><a href="#voldのソースコードの改変">voldのソースコードの改変</a></li>
+        <li><a href="#ビルド">ビルド</a></li>
+        <li><a href="#実行">実行</a></li>
+      </ul>
+    </li>
+    <li><a href="#手順3-ダンプしたデータと鍵を使用してpcで復号">手順3. ダンプしたデータと鍵を使用して、PCで復号</a></li>
+    <li><a href="#手順2-2-fridaを使用して復号用の鍵をダンプ">手順2-2. Fridaを使用して、復号用の鍵をダンプ</a></li>
+    <li><a href="#今後の課題">今後の課題</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><a href="https://source.android.com/security/encryption/file-based?hl=ja" target="_blank" rel="noopener noreffer">ファイルベースの暗号化</a>の説明にある通り、Android7.0以降ではファイルベースの暗号化（FBE）がサポートされています。Android10の/data/data/領域（最初のユーザーのアプリストレージ）もFBEで暗号化されています。FBEによる暗号化はスクリーンロック設定の有無に関わらず行われていますが、スクリーンロック設定が無い方が復号に必要な情報が少なくなります。</p>
+<p>スクリーンロック設定が無いAndroid10のエミュレータから/data/data/に該当する領域をダンプし、PC（Linux）で復号を試みたところ成功しました。本稿では使用した環境とその手順について記載します。</p>
+<h2 id="1手順の概要">1.手順の概要</h2>
+<p>大きく分けて３つの手順を踏みます。</p>
+<ol>
+<li>Android10のエミュレータから、復号対象のデータをダンプ</li>
+<li>Android10のエミュレータから、復号用の鍵をダンプ</li>
+<li>ダンプしたデータと鍵を使用して、PCで復号</li>
+</ol>
+<p>2.の手順については、以下の２つの方法があります。詳細については後述します。</p>
+<ul>
+<li>Androidのソースコードをダウンロードし、その中のvoldのソースコードの一部を改変した上でビルドして実行する方法</li>
+<li><a href="https://frida.re/docs/android/" target="_blank" rel="noopener noreffer">Frida</a>を使う方法</li>
+</ul>
+<h2 id="2使用した環境">2.使用した環境</h2>
+<h3 id="21-pc">2.1 PC</h3>
+<p>Arch Linux (5.10.50-1-lts)</p>
+<h3 id="22-androidのエミュレータ">2.2 Androidのエミュレータ</h3>
+<p><a href="https://developer.android.com/studio?hl=ja" target="_blank" rel="noopener noreffer">Android Studio</a>のAVD Managerから作成しました。</p>
+<p>Release Name: Q
+API Level: 29
+ABI: x86_64
+Target: Android10.0(Google APIs)
+Hardware: root権限が取得可能なもの（＝Play Storeにチェックが入っていないもの）
+スクリーンロック設定: 無し</p>
+<h3 id="ビルド環境">ビルド環境</h3>
+<p>DockerのUbuntu 18.04</p>
+<h2 id="コマンドの実行例の表記について">コマンドの実行例の表記について</h2>
+<p>本稿ではいくつかコマンドの実行例を記載します。
+複数の環境での実行例を記載するため、実行環境の区別を以下の表記で行います。</p>
+<table>
+<thead>
+<tr>
+<th>先頭部分の表記</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$</td>
+<td>PC上での実行</td>
+</tr>
+<tr>
+<td>generic_x86_64:/ #</td>
+<td>Android10のエミュレータ上でのroot権限での実行</td>
+</tr>
+<tr>
+<td>root@263eeed4469e:</td>
+<td>DockerのUbuntu18.04での実行</td>
+</tr>
+</tbody>
+</table>
+<h2 id="手順1-android10のエミュレータから復号対象のデータをダンプ">手順1. Android10のエミュレータから、復号対象のデータをダンプ</h2>
+<h3 id="fbeで暗号化されているか確認">FBEで暗号化されているか確認</h3>
+<p><a href="https://source.android.google.cn/security/encryption/file-based?hl=ja#validation" target="_blank" rel="noopener noreffer">ro.crypto.stateとro.crypto.typeの内容をチェックします。</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">generic_x86_64:/ # getprop | grep crypto
+</span></span><span class="line"><span class="cl">[ro.crypto.state]: [encrypted]
+</span></span><span class="line"><span class="cl">[ro.crypto.type]: [file]
+</span></span><span class="line"><span class="cl">[ro.crypto.volume.filenames_mode]: [aes-256-cts]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="ダンプ対象の確認">ダンプ対象の確認</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">generic_x86_64:/ # mount | grep &#39; /data &#39;                                                                                                                                        
+</span></span><span class="line"><span class="cl">/dev/block/vdc on /data type ext4 (rw,seclabel,nosuid,nodev,noatime,resgid=1065,errors=panic,data=ordered)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>/dev/block/vdcをダンプすることになります。</p>
+<h3 id="データのダンプ">データのダンプ</h3>
+<ul>
+<li>PCの受け側</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ nc -l -p 9999 | gzip -d &gt; ret
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>Android側</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">generic_x86_64:/ # dd if=/dev/block/vdc | gzip | nc 10.0.2.2 9999
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><a href="https://developer.android.com/studio/run/emulator-networking?hl=ja#networkaddresses" target="_blank" rel="noopener noreffer">10.0.2.2はPCのIPです。</a></p>
+<h3 id="ダンプしたデータの確認">ダンプしたデータの確認</h3>
+<p>成功するとretというファイル名のファイルがPC側にできます。サイズは800MBでした。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ file ret
+</span></span><span class="line"><span class="cl">ret: Linux rev 1.0 ext4 filesystem data, UUID=57f8f4bc-ffffabf4-655f-ffffbf67-946fc0f9fffff25b (needs journal recovery) (extents) (large files)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="ダンプしたデータのマウント">ダンプしたデータのマウント</h3>
+<p>FBEはファイル単位の暗号化のためか、復号用の鍵を知らなくてもマウントすることができました。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="err">$</span> <span class="nx">mkdir</span> <span class="nx">tmp</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span> <span class="nx">sudo</span> <span class="nx">mount</span> <span class="o">-</span><span class="nx">oloop</span><span class="p">,</span><span class="nx">ro</span> <span class="nx">ret</span> <span class="nx">tmp</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span> <span class="nx">ls</span> <span class="nx">tmp</span><span class="o">/</span>
+</span></span><span class="line"><span class="cl"><span class="nx">adb</span>   <span class="nx">app</span><span class="o">-</span><span class="nx">asec</span>       <span class="nx">app</span><span class="o">-</span><span class="nx">staging</span>  <span class="nx">dalvik</span><span class="o">-</span><span class="nx">cache</span>  <span class="nx">local</span>       <span class="nx">mediadrm</span>  <span class="nx">nfc</span>          <span class="nx">property</span>           <span class="nx">server_configurable_flags</span>  <span class="nx">system_de</span>    <span class="nx">user_de</span>
+</span></span><span class="line"><span class="cl"><span class="nx">anr</span>   <span class="nx">app</span><span class="o">-</span><span class="nx">ephemeral</span>  <span class="nx">backup</span>       <span class="nx">data</span>          <span class="nx">local</span><span class="p">.</span><span class="nx">prop</span>  <span class="nx">misc</span>      <span class="nx">ota</span>          <span class="nx">resource</span><span class="o">-</span><span class="nx">cache</span>     <span class="nx">ss</span>                         <span class="nx">tombstones</span>   <span class="nx">vendor</span>
+</span></span><span class="line"><span class="cl"><span class="nx">apex</span>  <span class="nx">app</span><span class="o">-</span><span class="nx">lib</span>        <span class="nx">bootchart</span>    <span class="nx">drm</span>           <span class="nx">lost</span><span class="o">+</span><span class="nx">found</span>  <span class="nx">misc_ce</span>   <span class="nx">ota_package</span>  <span class="nx">rollback</span>           <span class="nx">system</span>                     <span class="nx">unencrypted</span>  <span class="nx">vendor_ce</span>
+</span></span><span class="line"><span class="cl"><span class="nx">app</span>   <span class="nx">app</span><span class="o">-</span><span class="nx">private</span>    <span class="nx">cache</span>        <span class="nx">gsi</span>           <span class="nx">media</span>       <span class="nx">misc_de</span>   <span class="nx">preloads</span>     <span class="nx">rollback</span><span class="o">-</span><span class="nx">observer</span>  <span class="nx">system_ce</span>                  <span class="nx">user</span>         <span class="nx">vendor_de</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>/data/直下はFBEによる暗号化は行われていないようです。</p>
+<p>そして、/data/data/に相当する箇所を確認すると、暗号化されていることがわかります。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ ls tmp/data/
+</span></span><span class="line"><span class="cl">AAAAAAAAAAA,2zZ+TpRQYRLlS6VnXUFv+,EJZbQdnYQu,rXx6wTNt6JEB5BEUVfoPVzahC
+</span></span><span class="line"><span class="cl">AAAAAAAAAAA,2zZ+TpRQYRLlS6VnXUFv+65J8t6x7+3YXOzBqRWJk0nZdM39n2JkYkNodB
+</span></span><span class="line"><span class="cl">AAAAAAAAAAA,2zZ+TpRQYRLlS6VnXUFv+oKatth8Nj8ikU7+6YN1+2nZdM39n2JkYkNodB
+</span></span><span class="line"><span class="cl">AAAAAAAAAAA,2zZ+TpRQYRLlS6VnXUFvAYNJohexPAXaBEWJ75Flh8,LLjzQ,UyFg9JQr0o7KvB
+</span></span><span class="line"><span class="cl">AAAAAAAAAAA,2zZ+TpRQYRLlS6VnXUFvJPVfmuqrowGnKw9GraApO0nZdM39n2JkYkNodB
+</span></span><span class="line"><span class="cl">AAAAAAAAAAA,2zZ+TpRQYRLlS6VnXUFvUNayNrjrDFXzDkoOrxMUF+,LLjzQ,UyFg9JQr0o7KvB
+</span></span><span class="line"><span class="cl">（以下省略）
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="手順2-android10のエミュレータから復号用の鍵をダンプ">手順2. Android10のエミュレータから、復号用の鍵をダンプ</h2>
+<p>次に、復号用の鍵をAndroid10のエミュレータから取得します。ここでは、Androidのソースコードをダウンロードし、その中のvoldのコードの一部を改変した上でビルドして実行する方法について記述します。Fridaを使う方法については後述します。</p>
+<p><a href="https://source.android.com/security/encryption/file-based?hl=ja#key-derivation" target="_blank" rel="noopener noreffer">ファイルベースの暗号化: 鍵の派生</a>の中に、以下のような記述があります。</p>
+<blockquote>
+<p>512 ビットの鍵であるファイルベースの暗号鍵は、TEE に保持された別の鍵（256 ビット AES-GCM 鍵）で暗号化されてから保存されます。</p>
+</blockquote>
+<p>TEEとは<a href="https://source.android.com/security/trusty?hl=ja" target="_blank" rel="noopener noreffer">Trusted Execution Environment</a>のことです。TEEについての説明は割愛しますが、要するに復号用の鍵が単体のファイルとして存在するわけではないということです。</p>
+<p>復号用の鍵を手軽に取得する方法はないかと探していたところ、<a href="https://source.android.com/security/encryption/file-based?hl=ja#examples-and-source" target="_blank" rel="noopener noreffer">ファイルベースの暗号化: 例とソース</a>に、以下のような記述がありました。</p>
+<blockquote>
+<p>Android にはファイルベースの暗号化のリファレンス実装が用意されており、vold（system/vold）によって Android のストレージ デバイスとボリュームを管理する機能が提供されます。FBE を追加すると、複数のユーザーの CE 鍵と DE 鍵の管理に対応したいくつかの新しいコマンドが vold に提供されます。</p>
+</blockquote>
+<p>CE鍵とDE鍵については、<a href="https://source.android.com/security/encryption/file-based?hl=ja#direct-boot" target="_blank" rel="noopener noreffer">ファイルベースの暗号化: ダイレクト ブート</a>を参照してください。/data/data/領域の復号に必要なのはCE鍵です。上記の記述によると、voldのコードを参照すると復号用の鍵の取得方法が分かりそうです。</p>
+<p>そこでvoldのコードを調べたところ、<a href="https://android.googlesource.com/platform/system/vold/&#43;/refs/tags/android-10.0.0_r45/KeyStorage.h#64" target="_blank" rel="noopener noreffer">鍵を取得する関数</a>が見つかりました。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// Retrieve the key from the named directory.
+</span></span><span class="line"><span class="cl">bool retrieveKey(const std::string&amp; dir, const KeyAuthentication&amp; auth, KeyBuffer* key,
+</span></span><span class="line"><span class="cl">                 bool keepOld = false);
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>第１引数には、鍵に関連するファイルが置いてあるディレクトリを指定します。今回の目的では、/data/misc/vold/user_keys/ce/0/currentを指定することになります。
+第２引数には、<a href="https://source.android.com/security/encryption/file-based?hl=ja#key-derivation" target="_blank" rel="noopener noreffer">鍵の派生</a>で説明されている情報に関連するデータを渡します。しかし、スクリーンロック設定が無い場合は<a href="https://android.googlesource.com/platform/system/vold/&#43;/refs/tags/android-10.0.0_r45/KeyStorage.h#42" target="_blank" rel="noopener noreffer">kEmptyAuthentication</a>を指定するだけで良いのでお手軽です。
+第３引数は、この関数の実行結果を格納するバッファです。このデータが今回求めている復号用の鍵そのものです。</p>
+<p>関数retrieveKey()を呼び出せば、/data/data/の復号用の鍵を取得できることが分かりました。そこで、Androidのソースコードをダウンロードして、voldのコードをretrieveKey()を呼び出してその結果を保存するように書き換えた上でビルドすることにしました。それをAndroid10のエミュレータ上で実行すれば、復号用の鍵を取得できます。</p>
+<h3 id="ソースコードのダウンロード">ソースコードのダウンロード</h3>
+<p>詳細は<a href="https://source.android.com/setup/build/downloading?hl=ja" target="_blank" rel="noopener noreffer">ソースのダウンロード</a>を参照してください。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ mkdir tmp
+</span></span><span class="line"><span class="cl">$ cd tmp
+</span></span><span class="line"><span class="cl">$ repo init --depth=1 -u https://android.googlesource.com/platform/manifest -b android-10.0.0_r45
+</span></span><span class="line"><span class="cl">$ repo sync
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="voldのソースコードの改変">voldのソースコードの改変</h3>
+<p>ダウンロードしたソースコードの system/vold/main.cpp を以下の様に改変します。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">#include &lt;android-base/file.h&gt;
+</span></span><span class="line"><span class="cl">#include &#34;KeyStorage.h&#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">int main(int argc, char** argv) {
+</span></span><span class="line"><span class="cl">  if(argc != 3) return -1;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  android::vold::KeyBuffer key;
+</span></span><span class="line"><span class="cl">  android::vold::retrieveKey(argv[1], android::vold::kEmptyAuthentication, &amp;key);
+</span></span><span class="line"><span class="cl">  android::base::WriteStringToFile(std::string(key.data(), key.size()), argv[2], false);
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>retrieveKey()を実行して、結果（つまり復号用の鍵）をargv[2]で渡されたファイル名で保存して終了するプログラムです。retrieveKey()は実行の成否をbool値で返してくれるようですが、今回は気にしないことにしています。</p>
+<h3 id="ビルド">ビルド</h3>
+<p>改変したvoldをビルドします。<a href="https://source.android.com/setup/build/initializing?hl=ja" target="_blank" rel="noopener noreffer">公式ページ</a>によると、ビルド環境としてUbuntuのバージョンがいくつか挙げられています。今回はDockerのUbuntu 18.04で作業することにしました。本稿ではDockerの導入や使用方法については割愛します。また、ダウンロードしたソースコードもDocker内から参照できるようにmountしておきます。本稿では/mnt/で参照できるようにしています。</p>
+<p>まずはDockerを起動します。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ sudo docker run -it -v ダウンロードしたソースコードの絶対パス:/mnt/ ubuntu:18.04
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>次に、必要なパッケージをインストールします。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">root@263eeed4469e:~# apt update
+</span></span><span class="line"><span class="cl">root@263eeed4469e:~# apt-get install -y git-core gnupg flex bison build-essential zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z1-dev libgl1-mesa-dev libxml2-utils xsltproc unzip fontconfig python
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>そして、ビルドします。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">root@263eeed4469e:~# cd /mnt/
+</span></span><span class="line"><span class="cl">root@263eeed4469e:/mnt# export LC_ALL=C
+</span></span><span class="line"><span class="cl">root@263eeed4469e:/mnt# source build/envsetup.sh
+</span></span><span class="line"><span class="cl">root@263eeed4469e:/mnt# lunch aosp_x86_64-eng
+</span></span><span class="line"><span class="cl">root@263eeed4469e:/mnt# cd system/vold/
+</span></span><span class="line"><span class="cl">root@263eeed4469e:/mnt/system/vold# mma
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>手元の環境では、15分程度で完了しました。/mnt/out/target/product/generic_x86_64/system/bin/vold が求めるファイルです。このファイルをAndroid10のエミュレータにコピーします。本物のvoldと混同しない様にファイル名も変更しておきます。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ adb push out/target/product/generic_x86_64/system/bin/vold /data/local/tmp/dump
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="実行">実行</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">generic_x86_64:/ # cd /data/local/tmp
+</span></span><span class="line"><span class="cl">generic_x86_64:/data/local/tmp # chmod +x dump
+</span></span><span class="line"><span class="cl">generic_x86_64:/data/local/tmp # ./dump /data/misc/vold/user_keys/ce/0/current ce_key                                                                                            
+</span></span><span class="line"><span class="cl">generic_x86_64:/data/local/tmp # xxd -g 1 ce_key                               
+</span></span><span class="line"><span class="cl">00000000: 63 47 c7 01 04 00 27 c4 d5 8f 2b 1b a8 94 9c ed  cG....&#39;...+.....
+</span></span><span class="line"><span class="cl">00000010: a9 65 92 44 fe 25 ea 91 93 25 97 05 e1 41 48 1e  .e.D.%...%...AH.
+</span></span><span class="line"><span class="cl">00000020: ed 52 3c fe 67 83 d5 ca c1 40 fe f3 f3 f1 98 10  .R&lt;.g....@......
+</span></span><span class="line"><span class="cl">00000030: 88 64 46 16 95 69 59 d5 b2 19 ce 72 fc 48 a1 6a  .dF..iY....r.H.j
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>復号用の鍵が取得できました。ランダムに生成されているようなので、値は環境ごとに異なります。</p>
+<h2 id="手順3-ダンプしたデータと鍵を使用してpcで復号">手順3. ダンプしたデータと鍵を使用して、PCで復号</h2>
+<p>手順1でマウントはしているので、鍵を登録すれば読めるようになります。</p>
+<p><a href="https://source.android.com/security/encryption/file-based?hl=ja#fscrypt-encryption" target="_blank" rel="noopener noreffer">ファイルベースの暗号化: fscrypt暗号化</a>の項目に記載されている通り、fscryptによって暗号化されています。そこで、<a href="https://github.com/google/fscryptctl" target="_blank" rel="noopener noreffer">fscryptctl</a>を使って鍵の登録を行います。</p>
+<p>本稿ではAndroid10のエミュレータを対象としていますが、<a href="https://source.android.com/security/encryption/file-based?hl=ja#enabling-fbe-on-internal-storage" target="_blank" rel="noopener noreffer">ファイルベースの暗号化: 内部ストレージ</a>の項目に記載されている通り、Android10では暗号化ポリシーとしてv1が使用されています。</p>
+<blockquote>
+<p>v1 フラグを指定するとバージョン 1 の暗号化ポリシーが、v2 フラグを指定するとバージョン 2 の暗号化ポリシーが選択されます。バージョン 2 の暗号化ポリシーでは、安全性と柔軟性に優れた鍵導出関数が使用されます。デフォルトは、Android 11 以降を搭載して出荷されたデバイス（ro.product.first_api_level によって特定される）の場合は v2、Android 10 以前を搭載して出荷されたデバイスの場合は v1 です。</p>
+</blockquote>
+<p>そして、<a href="https://github.com/google/fscryptctl/commit/d2066cded914860164ffacebc24ea0afc0b57963" target="_blank" rel="noopener noreffer">fscryptctlでは2021/2/3のコミットでv1のサポートが落とされた</a>ため、その１つ前のコミットを使用することにします。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ git clone https://github.com/google/fscryptctl/
+</span></span><span class="line"><span class="cl">$ cd fscryptctl/
+</span></span><span class="line"><span class="cl">$ git checkout 60812534fc3ecf3a43b67bfeee5c5a1bc7daadc8
+</span></span><span class="line"><span class="cl">$ make
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>そして、鍵を読み込ませます。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ adb pull /data/local/tmp/ce_key
+</span></span><span class="line"><span class="cl">$ ./fscryptctl insert_key --ext4 &lt; ce_key
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>ここで/data/data/に相当する箇所を確認すると、復号できていることが確認できます。成功しました。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ ls tmp/data/
+</span></span><span class="line"><span class="cl">android                                                        com.android.theme.color.orchid
+</span></span><span class="line"><span class="cl">com.android.apps.tag                                           com.android.theme.color.purple
+</span></span><span class="line"><span class="cl">com.android.backupconfirm                                      com.android.theme.color.space
+</span></span><span class="line"><span class="cl">com.android.bips                                               com.android.theme.font.notoserifsource
+</span></span><span class="line"><span class="cl">com.android.bluetooth                                          com.android.theme.icon.roundedrect
+</span></span><span class="line"><span class="cl">（以下省略）
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="手順2-2-fridaを使用して復号用の鍵をダンプ">手順2-2. Fridaを使用して、復号用の鍵をダンプ</h2>
+<p>以上の手順で、voldのretrieveKey()を呼べば復号用の鍵が取得できることが分かりました。本物のvoldはAndroidの中で動いているため、<a href="https://frida.re/docs/android/" target="_blank" rel="noopener noreffer">Frida</a>を使用して本物のvoldの中でretrieveKey()を呼んでも復号用の鍵が取得できるのではないかと考えました。試してみたところ、取得に成功したのでその手順を記載します。Fridaの説明や使い方については<a href="https://frida.re/docs/android/" target="_blank" rel="noopener noreffer">Fridaのサイト</a>を参照してください。</p>
+<p>本物のvold内のretrieveKey()を呼び出すために、retrieveKey()のアドレスを特定する必要があります。特定するために、Android10のエミュレータから本物のvoldを取得します。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ adb root
+</span></span><span class="line"><span class="cl">$ adb pull /system/bin/vold
+</span></span><span class="line"><span class="cl">$ sha1sum vold
+</span></span><span class="line"><span class="cl">d638e304a741ed6fbb1fa36a989d953208a73bfa  vold
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>取得したvoldを解析すれば、retrieveKey()のアドレスを取得することができます。解析方法については割愛します。関数内で参照している<a href="https://android.googlesource.com/platform/system/vold/&#43;/refs/tags/android-10.0.0_r45/KeyStorage.cpp#517" target="_blank" rel="noopener noreffer">Version mismatch, expected</a>という文字列で探せばすぐに見つかります。本稿で取得したvoldでは0x0004c230でした。</p>
+<p>retrieveKey()は引数にC++の型が出てくるため、Fridaで実行する場合はここも工夫が必要です。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// Retrieve the key from the named directory.
+</span></span><span class="line"><span class="cl">bool retrieveKey(const std::string&amp; dir, const KeyAuthentication&amp; auth, KeyBuffer* key,
+</span></span><span class="line"><span class="cl">                 bool keepOld = false);
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>以下の方針で試したところ、うまくいきました。</p>
+<p>第１引数のstd::stringは、<a href="https://android.googlesource.com/platform/system/core/&#43;/android-10.0.0_r45/base/include/android-base/stringprintf.h#29" target="_blank" rel="noopener noreffer">std::string StringPrintf(const char* fmt, &hellip;)</a>を使用して生成する。
+第２引数は<a href="https://android.googlesource.com/platform/system/vold/&#43;/refs/tags/android-10.0.0_r45/KeyStorage.h#42" target="_blank" rel="noopener noreffer">kEmptyAuthentication</a>を指定するので、本物のvoldからkEmptyAuthenticationのアドレスを探して使用する。<a href="https://android.googlesource.com/platform/system/vold/&#43;/refs/tags/android-10.0.0_r45/KeyUtil.cpp#175" target="_blank" rel="noopener noreffer">voldの元々のコード上にもkEmptyAuthenticationを指定してretrieveKey()を呼び出している箇所がある</a>ので、retrieveKey()のアドレスが分かっていれば探すのは難しくありません。本稿で取得したvoldでは0x000e8178でした。
+第３引数のKeyBufferは<a href="https://android.googlesource.com/platform/system/vold/&#43;/refs/tags/android-10.0.0_r45/KeyBuffer.h#51" target="_blank" rel="noopener noreffer">charのvector</a>ですが、ある程度のサイズの0初期化されたメモリを渡してやったところ、うまく動いた（メモリの先頭８バイトの部分に、復号用の鍵の先頭アドレスが入っていた）のでヨシ！としました。</p>
+<p>最終的に以下のようなプログラムになりました。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">let offset_kEmptyAuthentication = 0x000e8178;
+</span></span><span class="line"><span class="cl">let offset_retrieveKey = 0x0004c230;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">let find = Module.findExportByName(&#39;libbase.so&#39;, &#39;_ZN7android4base12StringPrintfEPKcz&#39;);
+</span></span><span class="line"><span class="cl">let android_base_StringPrintf = new NativeFunction(find, &#39;pointer&#39;, [&#39;pointer&#39;, &#39;pointer&#39;]);
+</span></span><span class="line"><span class="cl">let format = Memory.allocUtf8String(&#39;%s&#39;);
+</span></span><span class="line"><span class="cl">let dir = android_base_StringPrintf(format, Memory.allocUtf8String(&#39;/data/misc/vold/user_keys/ce/0/current&#39;));
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">let vold = Process.findModuleByName(&#39;vold&#39;);
+</span></span><span class="line"><span class="cl">let kEmptyAuthentication = (vold.base.add(offset_kEmptyAuthentication));
+</span></span><span class="line"><span class="cl">let keyBuffer = Memory.alloc(1024);
+</span></span><span class="line"><span class="cl">let retrieveKey = new NativeFunction(vold.base.add(offset_retrieveKey), &#39;bool&#39;, [&#39;pointer&#39;, &#39;pointer&#39;, &#39;pointer&#39;, &#39;bool&#39;]);
+</span></span><span class="line"><span class="cl">retrieveKey(dir, kEmptyAuthentication, keyBuffer, 0);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">let key_addr = keyBuffer.readU64();
+</span></span><span class="line"><span class="cl">let key = (ptr(key_addr)).readByteArray(64);
+</span></span><span class="line"><span class="cl">console.log(&#39;key:&#39;);
+</span></span><span class="line"><span class="cl">console.log(key);
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>このプログラムをmain.jsというファイル名で保存して、Fridaで実行します。</p>
+<p>まずvoldのPIDを取得します</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ frida-ps -U | grep vold
+</span></span><span class="line"><span class="cl">1747  vold
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>取得したPIDに対してmain.jsを実行します。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ frida -U -l main.js -p 1747
+</span></span><span class="line"><span class="cl">（中略）
+</span></span><span class="line"><span class="cl">key:
+</span></span><span class="line"><span class="cl">           0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+</span></span><span class="line"><span class="cl">00000000  63 47 c7 01 04 00 27 c4 d5 8f 2b 1b a8 94 9c ed  cG....&#39;...+.....
+</span></span><span class="line"><span class="cl">00000010  a9 65 92 44 fe 25 ea 91 93 25 97 05 e1 41 48 1e  .e.D.%...%...AH.
+</span></span><span class="line"><span class="cl">00000020  ed 52 3c fe 67 83 d5 ca c1 40 fe f3 f3 f1 98 10  .R&lt;.g....@......
+</span></span><span class="line"><span class="cl">00000030  88 64 46 16 95 69 59 d5 b2 19 ce 72 fc 48 a1 6a  .dF..iY....r.H.j
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>手順2で取得した復号用の鍵と一致していることが分かります。</p>
+<h2 id="今後の課題">今後の課題</h2>
+<ul>
+<li>実機での実行について
+本稿ではAndroid10のエミュレータで実行しましたが、復号用の鍵が取得できれば実機でも同様に復号できるのではないかと考えています。しかし、実機でも復号用の鍵の取得が本稿の方法で取得できるかどうかは、実際に検証する必要があるだろうと考えています。</li>
+<li>スクリーンロック設定がある場合について
+スクリーンロック設定がある場合はretrieveKey()の第２引数に<a href="https://source.android.google.cn/security/encryption/file-based?hl=ja#key-derivation" target="_blank" rel="noopener noreffer">ファイルベースの暗号化: 鍵の派生</a>で記載されている情報を詰めてやる必要があるようです。特に１つ目の要件の認証トークンは、voldのコードを軽く読んだ感じでは他のプログラムからvoldに対して渡される情報のようなので、どのプログラムが渡しているのかを調査する必要がありそうです。この検証も、実機を使って検証する必要があるだろうと考えています。</li>
+<li>Android11以降での実行について
+<a href="https://source.android.com/security/encryption/file-based?hl=ja#enabling-fbe-on-internal-storage" target="_blank" rel="noopener noreffer">ファイルベースの暗号化: 内部ストレージ</a>に説明がある通り、FBEに関してAndroid11から導入された仕組みが存在し、本稿の実行環境であるAndroid10と違いがあるように見えます。Android11以降での復号についても、今後の課題としたいと思います。</li>
+</ul></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2021-08-03</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="https://keishitsuboi.github.io/android10/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://keishitsuboi.github.io/android10/" data-title="ファイルベースの暗号化（FBE）されたAndroid10のエミュレータの/data/data/領域をPCで復号してみる" data-via="cyberdefense_jp" data-hashtags="Android"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://keishitsuboi.github.io/android10/" data-hashtag="Android"><i class="fab fa-facebook-square fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="https://keishitsuboi.github.io/tags/android/">Android</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="https://keishitsuboi.github.io/">Home</a></span>
+        </section>
+    </div>
+
+
+    <div class="post-nav"><a href="https://keishitsuboi.github.io/bitlocker/" class="prev" rel="prev" title="Kali LinuxでBitLocker ~やってみる編 ~"><i class="fas fa-angle-left fa-fw"></i>Kali LinuxでBitLocker ~やってみる編 ~</a>
+            <a href="https://keishitsuboi.github.io/%E7%A0%B4%E5%A3%8A/" class="next" rel="next" title="破壊・フォーマットされたUSBメモリからデータを復旧する">破壊・フォーマットされたUSBメモリからデータを復旧する<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="disqus_thread" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://disqus.com/?ref_noscript">Disqus</a>.
+            </noscript><div id="gitalk" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
+            </noscript><div id="valine" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript><div id="commento"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://commento.io/">Commento</a>.
+            </noscript><div id="utterances"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2016 - 2022</span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://www.cyberdefense.jp/" target="_blank">株式会社サイバーディフェンス研究所｜Cyber Defense Institute Inc.</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.min.css"><link rel="stylesheet" href="https://keishitsuboi.github.io/lib/valine/valine.min.css"><script type="text/javascript" src="https://.disqus.com/embed.js" defer></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script><script type="text/javascript" src="https://cdn.commento.io/js/commento.js" defer></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":10},"comment":{"gitalk":{"admin":[""],"clientID":"","clientSecret":"","id":"2021-08-03T18:02:06+09:00","owner":"","repo":"","title":"ファイルベースの暗号化（FBE）されたAndroid10のエミュレータの/data/data/領域をPCで復号してみる"},"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":""},"valine":{"appId":"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI","appKey":"WBmoGyJtbqUswvfLh6L8iEBr","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":false,"highlight":true,"lang":"en","pageSize":10,"placeholder":"Your comment ...","recordIP":true,"serverURLs":"https://leancloud.hugoloveit.com","visitor":true}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.en","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"algolia"}};</script><script type="text/javascript" src="https://keishitsuboi.github.io/js/theme.min.js"></script></body>
+</html>

@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Kali LinuxでBitLocker ~やってみる編 ~ - DARK MATTER</title><meta name="Description" content="Discover what the Hugo - LoveIt theme is all about and the core-concepts behind it."><meta property="og:title" content="Kali LinuxでBitLocker ~やってみる編 ~" />
+<meta property="og:description" content="Discover what the Hugo - LoveIt theme is all about and the core-concepts behind it." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://keishitsuboi.github.io/bitlocker/" /><meta property="og:image" content="https://keishitsuboi.github.io/bitlocker/featured-image.jpg"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2020-10-26T21:29:01+08:00" />
+<meta property="article:modified_time" content="2020-10-26T21:29:01+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://keishitsuboi.github.io/bitlocker/featured-image.jpg"/>
+<meta name="twitter:title" content="Kali LinuxでBitLocker ~やってみる編 ~"/>
+<meta name="twitter:description" content="Discover what the Hugo - LoveIt theme is all about and the core-concepts behind it."/>
+<meta name="application-name" content="DARK MATTER">
+<meta name="apple-mobile-web-app-title" content="DARK MATTER"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="https://keishitsuboi.github.io/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="https://keishitsuboi.github.io/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="https://keishitsuboi.github.io/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="https://keishitsuboi.github.io/apple-touch-icon.png"><link rel="mask-icon" href="https://keishitsuboi.github.io/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="https://keishitsuboi.github.io/site.webmanifest"><link rel="canonical" href="https://keishitsuboi.github.io/bitlocker/" /><link rel="next" href="https://keishitsuboi.github.io/android10/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="https://keishitsuboi.github.io/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Kali LinuxでBitLocker ~やってみる編 ~",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/keishitsuboi.github.io\/bitlocker\/"
+        },"image": ["https:\/\/keishitsuboi.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "PKI","wordcount":  1575 ,
+        "url": "https:\/\/keishitsuboi.github.io\/bitlocker\/","datePublished": "2020-10-26T21:29:01+08:00","dateModified": "2020-10-26T21:29:01+08:00","license": "株式会社サイバーディフェンス研究所のエンジニアによるテックブログ","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": "https:\/\/keishitsuboi.github.io\/images\/dark_matter_logo.png"},"author": {
+                "@type": "Person",
+                "name": "matsunaga"
+            },"description": "Discover what the Hugo - LoveIt theme is all about and the core-concepts behind it."
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('dark' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'dark' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="https://keishitsuboi.github.io/" title="DARK MATTER">DARK MATTER</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="https://keishitsuboi.github.io/posts/"> 記事一覧 </a><a class="menu-item" href="https://keishitsuboi.github.io/tags/"> タグ </a><a class="menu-item" href="https://keishitsuboi.github.io/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="https://keishitsuboi.github.io/" title="DARK MATTER">DARK MATTER</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="https://keishitsuboi.github.io/posts/" title="">記事一覧</a><a class="menu-item" href="https://keishitsuboi.github.io/tags/" title="">タグ</a><a class="menu-item" href="https://keishitsuboi.github.io/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a><a href="javascript:void(0);" class="menu-item" title="Select Language">English<i class="fas fa-chevron-right fa-fw"></i>
+                    <select class="language-select" onchange="location = this.value;"><option value="/bitlocker/" selected>English</option><option value="/zh-cn/bitlocker/">简体中文</option><option value="/fr/bitlocker/">Français</option></select>
+                </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Kali LinuxでBitLocker ~やってみる編 ~</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://keishitsuboi.github.io/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>matsunaga</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-10-26">2020-10-26</time>&nbsp;<span id="/bitlocker/" class="leancloud_visitors" data-flag-title="Kali LinuxでBitLocker ~やってみる編 ~">
+                        <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;views
+                    </span>&nbsp;</div>
+        </div><div class="featured-image"><img
+        class="lazyload"
+        src="https://keishitsuboi.github.io/svg/loading.min.svg"
+        data-src="https://keishitsuboi.github.io/bitlocker/bitlocker1.png"
+        data-srcset="https://keishitsuboi.github.io/bitlocker/bitlocker1.png, https://keishitsuboi.github.io/bitlocker/bitlocker1.png 1.5x, https://keishitsuboi.github.io/bitlocker/bitlocker1.png 2x"
+        data-sizes="auto"
+        alt="/bitlocker/bitlocker1.png"
+        title="Discover what the Hugo - LoveIt theme is all about and the core-concepts behind it." /></div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-はじめに">1 はじめに</a>
+      <ul>
+        <li><a href="#できるようになること">できるようになること</a></li>
+        <li><a href="#必要なもの">必要なもの</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-kali-linux-のインストール">2 Kali Linux のインストール</a></li>
+    <li><a href="#パッケージのインストール">パッケージのインストール</a></li>
+    <li><a href="#パーティションの確認">パーティションの確認</a></li>
+    <li><a href="#linuxカーネルのビルド">Linuxカーネルのビルド</a></li>
+    <li><a href="#起動スクリプトの作成">起動スクリプトの作成</a></li>
+    <li><a href="#セキュアブート鍵の作成">セキュアブート鍵の作成</a></li>
+    <li><a href="#boot-パーティションの削除">/boot パーティションの削除</a></li>
+    <li><a href="#keytoolの準備">KeyToolの準備</a></li>
+    <li><a href="#unified-kernel-image-の作成">Unified Kernel Image の作成</a></li>
+    <li><a href="#セキュアブートのモードをセットアップモードへ">セキュアブートのモードをセットアップモードへ</a></li>
+    <li><a href="#セキュアブート鍵の登録">セキュアブート鍵の登録</a></li>
+    <li><a href="#セキュアブートのモード確認">セキュアブートのモード確認</a></li>
+    <li><a href="#カスタムカーネルの起動">カスタムカーネルの起動</a></li>
+    <li><a href="#tpm2-へ-luks-パスフレーズを封入">TPM2 へ LUKS パスフレーズを封入</a></li>
+    <li><a href="#お掃除">お掃除</a></li>
+    <li><a href="#セキュアブート状態の確認">セキュアブート状態の確認</a></li>
+    <li><a href="#おわりに">おわりに</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p>Windows の BitLocker、Linux ユーザーにはとてもうらやましいですよね。
+Trusted Platform Module（TPM）が搭載された PC なら手軽にディスクを暗号化できて、パスフレーズ入力無しで OS 起動できて。
+そんな Windows のうらやま機能を Kali Linux でやっていきます。</p>
+<h2 id="1-はじめに">1 はじめに</h2>
+<p>技術部の松永です。</p>
+<p>2年ほど前にネットワークペネトレーションテストチームへ拉致られて以来、Linux で Windows をやっつけるツールの開発などやっています（楽しい）。
+そんな縁もあり、ペネトレーションテストに使用する Linux PC を BitLocker のようにディスク暗号化しつつ自動起動できるようにする必要性が生じ、勉強する機会を得られました。
+手順や得られた知識をブログで公開していきたいと思いますが、とりあえずやってみるだけでも 1 日作業になるため今回は手順のみ紹介したいと思います。
+やれる環境のある方は是非チャレンジして頂き、やれる環境の無い方は次回以降で手順を解説するのでそちらを見てフムフムして頂けると幸いです。</p>
+<p>本稿では Kali Linux を使いますが、Debian 系の他のディストリビューションでも同様の手順で実施できると考えています。
+私は Kali Linux の他に Ubuntu（Focal Fossa） も試していますが、複雑な手順が必要だったのが Kali Linux です。
+Kali Linux でできるなら他の Debian 系も大丈夫だろうと思いつつ、次回以降でディストリビューションの差異の話もしたいと思います。</p>
+<h3 id="できるようになること">できるようになること</h3>
+<ul>
+<li>Kali Linux を LUKS（Linux Unified Key Setup）でディスク暗号化してインストール</li>
+<li>Kali Linux のセキュアブート対応</li>
+<li>ディスク暗号化（LUKS）のパスフレーズを Trusted Platform Module（TPM） 2.0 デバイスへ封入し、パスフレーズ入力無しで Kali Linux を起動</li>
+</ul>
+<p>なぜセキュアブート対応するのか？は次回以降での解説とします。</p>
+<h3 id="必要なもの">必要なもの</h3>
+<ul>
+<li>TPM 2.0 を搭載した PC
+<ul>
+<li>本稿では ThinkCentre M90n-1 Nano を使いました</li>
+</ul>
+</li>
+<li>Kali Linux のインストールメディア
+<ul>
+<li>本稿では kali-linux-2020.3-installer-netinst-amd64.iso を USB メモリへ入れて使いました</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-kali-linux-のインストール">2 Kali Linux のインストール</h2>
+<p>インストールの前に BIOS（UEFI）セットアップメニューを開き、以下のように設定します。</p>
+<figure><img src="https://keishitsuboi.github.io/bitlocker/bitlocker1.png"/>
+</figure>
+
+<figure><img src="https://keishitsuboi.github.io/bitlocker/bitlocker2.png"/>
+</figure>
+
+<p>最近の Linux は Windows よりも簡単にインストールできるので手順は詳しく解説しません。
+今回は以下の設定でインストールしましたが、<font color="red">パーティショニングの方法: ガイド - ディスク全体を使い、暗号化 LVM をセットアップする</font>以外の部分はお好みで大丈夫です。
+この際設定する LUKS 暗号化パスフレーズはセットアップ時に使用する他、TPM での起動ができなくなった場合にも使用するので安全に保管しておく必要があります。</p>
+<ul>
+<li>言語: 日本語</li>
+<li>ロケール: 日本</li>
+<li>キーボード: 日本語</li>
+<li>ホスト名: kali</li>
+<li>ドメイン名: (空白)</li>
+<li>ユーザー名: user</li>
+<li>パーティショニングの方法: ガイド - ディスク全体を使い、暗号化 LVM をセットアップする</li>
+<li>パーティショニング機構: すべてのファイルを 1 つのパーティションに（初心者ユーザには推奨）</li>
+<li>インストールするソフトウェア: 全て無し</li>
+</ul>
+<figure><img src="https://keishitsuboi.github.io/bitlocker/bitlocker3.png"/>
+</figure>
+
+<h2 id="パッケージのインストール">パッケージのインストール</h2>
+<p>Kali Linux のインストールが完了したら、設定した暗号化パスフレーズを入力しつつ Kali Linux を起動します。
+ここからしばらくコマンドラインの作業になります。
+一般ユーザーで実行可能な操作はほぼ無いため、以降の作業は全て root ユーザーで実行してください。
+コピペで実行しやすいよう、# や $ は付けずに表記します。</p>
+<p>ソースパッケージを有効化しつつ、必要なパッケージをインストールします。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">grep &#39;^deb &#39; /etc/apt/sources.list | sed &#39;s/^deb /deb-src /g&#39; | tee /etc/apt/sources.list.d/deb-src.list
+</span></span><span class="line"><span class="cl">apt-get update
+</span></span><span class="line"><span class="cl">apt-get install -y tpm2-tools tpm2-abrmd efibootmgr efitools binutils dosfstools uuid-runtime
+</span></span><span class="line"><span class="cl">apt-get install -y build-essential flex bison bc rsync libelf-dev libssl-dev libncurses-dev
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>ここで一度、TPM2 デバイスへアクセスできるか確認します。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">tpm2_pcrread sha256
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>以下のように TPM2 の PCR レジスタが表示されたら成功です（0-7の値はXでマスクしてます）。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sha256:
+</span></span><span class="line"><span class="cl">  0 : 0xXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+</span></span><span class="line"><span class="cl">  1 : 0xXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+</span></span><span class="line"><span class="cl">  2 : 0xXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+</span></span><span class="line"><span class="cl">  3 : 0xXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+</span></span><span class="line"><span class="cl">  4 : 0xXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+</span></span><span class="line"><span class="cl">  5 : 0xXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+</span></span><span class="line"><span class="cl">  6 : 0xXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+</span></span><span class="line"><span class="cl">  7 : 0xXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+</span></span><span class="line"><span class="cl">  8 : 0x0000000000000000000000000000000000000000000000000000000000000000
+</span></span><span class="line"><span class="cl">  9 : 0x0000000000000000000000000000000000000000000000000000000000000000
+</span></span><span class="line"><span class="cl">  10: 0x0000000000000000000000000000000000000000000000000000000000000000
+</span></span><span class="line"><span class="cl">  11: 0x0000000000000000000000000000000000000000000000000000000000000000
+</span></span><span class="line"><span class="cl">  12: 0x0000000000000000000000000000000000000000000000000000000000000000
+</span></span><span class="line"><span class="cl">  13: 0x0000000000000000000000000000000000000000000000000000000000000000
+</span></span><span class="line"><span class="cl">  14: 0x0000000000000000000000000000000000000000000000000000000000000000
+</span></span><span class="line"><span class="cl">  15: 0x0000000000000000000000000000000000000000000000000000000000000000
+</span></span><span class="line"><span class="cl">  16: 0x0000000000000000000000000000000000000000000000000000000000000000
+</span></span><span class="line"><span class="cl">  17: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+</span></span><span class="line"><span class="cl">  18: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+</span></span><span class="line"><span class="cl">  19: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+</span></span><span class="line"><span class="cl">  20: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+</span></span><span class="line"><span class="cl">  21: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+</span></span><span class="line"><span class="cl">  22: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+</span></span><span class="line"><span class="cl">  23: 0x0000000000000000000000000000000000000000000000000000000000000000
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="パーティションの確認">パーティションの確認</h2>
+<p>lsblk コマンドで Kali Linux インストール後のパーティションの状態を確認します。
+本稿で確認に使用した PC のストレージは NVMe だったため、以下のようになっています。
+ハードディスクや SSD の場合は sda1 など別の結果が表示され、以降のコマンドで適宜読みかえが必要になるのでご注意ください。</p>
+<p><code>lsblk</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">NAME                  MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+</span></span><span class="line"><span class="cl">nvme0n1               259:0    0   477G  0 disk
+</span></span><span class="line"><span class="cl">├─nvme0n1p1           259:2    0   512M  0 part  /boot/efi
+</span></span><span class="line"><span class="cl">├─nvme0n1p2           259:3    0   244M  0 part  /boot
+</span></span><span class="line"><span class="cl">└─nvme0n1p3           259:4    0 476.2G  0 part
+</span></span><span class="line"><span class="cl">  └─nvme0n1p3_crypt   254:0    0 476.2G  0 crypt
+</span></span><span class="line"><span class="cl">    ├─kali--vg-root   254:1    0 460.4G  0 lvm   /
+</span></span><span class="line"><span class="cl">    └─kali--vg-swap_1 254:2    0  15.9G  0 lvm   [SWAP]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>以降は下記のパーティション構成を前提として記載します。</p>
+<ul>
+<li>Kali Linux をインストールしたディスク: /dev/nvme0n1</li>
+<li>EFIシステムパーティション（ESP）: /dev/nvme0n1p1</li>
+<li>ブートパーティション: /dev/nvme0n1p2</li>
+<li>LUKS 暗号化パーティション: /dev/nvme0n1p3</li>
+</ul>
+<h2 id="linuxカーネルのビルド">Linuxカーネルのビルド</h2>
+<p>Kali Linux をセキュアブート対応するには、Linux カーネルのビルドが必要になります。
+ビルドはとても時間がかかります。
+ここは環境による差分が無いので、コマンドをそのまま貼り付けて実行して大丈夫です。
+以下のコマンドを実行してビルドが始まったら、次のステップへ進みます。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mkdir /root/linux-image
+</span></span><span class="line"><span class="cl">chown -R _apt:root /root/linux-image
+</span></span><span class="line"><span class="cl">cd /root/linux-image
+</span></span><span class="line"><span class="cl">apt-get source linux-image-amd64
+</span></span><span class="line"><span class="cl">cd linux-*
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">cd certs
+</span></span><span class="line"><span class="cl">cat &lt;&lt;EOS &gt; x509.genkey
+</span></span><span class="line"><span class="cl">[ req ]
+</span></span><span class="line"><span class="cl">default_bits = 4096
+</span></span><span class="line"><span class="cl">distinguished_name = req_distinguished_name
+</span></span><span class="line"><span class="cl">prompt = no
+</span></span><span class="line"><span class="cl">string_mask = utf8only
+</span></span><span class="line"><span class="cl">x509_extensions = myexts
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[ req_distinguished_name ]
+</span></span><span class="line"><span class="cl">CN = Modules
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[ myexts ]
+</span></span><span class="line"><span class="cl">basicConstraints=critical,CA:FALSE
+</span></span><span class="line"><span class="cl">keyUsage=digitalSignature
+</span></span><span class="line"><span class="cl">subjectKeyIdentifier=hash
+</span></span><span class="line"><span class="cl">authorityKeyIdentifier=keyid
+</span></span><span class="line"><span class="cl">EOS
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">openssl req -new -nodes -utf8 -sha256 -days 36500 -batch -x509 -config x509.genkey -outform PEM -out kernel_key.pem -keyout kernel_key.pem
+</span></span><span class="line"><span class="cl">cd ..
+</span></span><span class="line"><span class="cl">cp /boot/config-$(uname -r) .config
+</span></span><span class="line"><span class="cl">make olddefconfig
+</span></span><span class="line"><span class="cl">sed -i.bak -e &#39;s/.*CONFIG_MODULE_SIG_ALL\W.*/CONFIG_MODULE_SIG_ALL=y/&#39; \
+</span></span><span class="line"><span class="cl">  -e &#39;s#.*CONFIG_MODULE_SIG_KEY\W.*#CONFIG_MODULE_SIG_KEY=&#34;certs/kernel_key.pem&#34;#&#39; \
+</span></span><span class="line"><span class="cl">  -e &#39;s/.*CONFIG_SYSTEM_TRUSTED_KEYS\W.*/CONFIG_SYSTEM_TRUSTED_KEYS=&#34;&#34;/&#39; \
+</span></span><span class="line"><span class="cl">  -e &#39;s/.*CONFIG_CRYPTO_SHA512\W.*/CONFIG_CRYPTO_SHA512=y/&#39; \
+</span></span><span class="line"><span class="cl">  -e &#39;s/.*CONFIG_DEBUG_INFO\W.*/CONFIG_DEBUG_INFO=n/&#39; .config
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">: | make -j $(nproc) bindeb-pkg
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="起動スクリプトの作成">起動スクリプトの作成</h2>
+<p>Kali Linux 起動時に TPM2 から LUKS 暗号化パスフレーズを開封し、LUKS 暗号化されたパーティションを自動的にオープンするスクリプトを作成します。
+スクリプトや必要なモジュールを initramfs へコピーするフックスクリプト、crypttab でスクリプトが実行されるよう準備しておきます。
+ここは環境による差分が無いので、コマンドをそのまま貼り付けて実行して大丈夫です。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOS &gt; /usr/local/bin/tpm2_unseal_lukskey
+</span></span></span><span class="line"><span class="cl"><span class="s">#!/bin/sh
+</span></span></span><span class="line"><span class="cl"><span class="s">tpm2_unseal -c 0x81000000 -p pcr:sha256:0,2,4,7
+</span></span></span><span class="line"><span class="cl"><span class="s">if [ \$? -ne 0 ]; then
+</span></span></span><span class="line"><span class="cl"><span class="s">  /lib/cryptsetup/askpass &#34;Unlocking the disk fallback \$CRYPTTAB_SOURCE (\$CRYPTTAB_NAME). Enter passphrase: &#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">fi
+</span></span></span><span class="line"><span class="cl"><span class="s">EOS</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOS &gt; /etc/initramfs-tools/hooks/tpm2-initramfs-hook
+</span></span></span><span class="line"><span class="cl"><span class="s">. /usr/share/initramfs-tools/hook-functions
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">copy_exec /usr/lib/x86_64-linux-gnu/libtss2-tcti-device.so.0.0.0
+</span></span></span><span class="line"><span class="cl"><span class="s">copy_exec /usr/bin/tpm2_unseal
+</span></span></span><span class="line"><span class="cl"><span class="s">copy_exec /usr/local/bin/tpm2_unseal_lukskey
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">copy_modules_dir kernel/drivers/char/tpm
+</span></span></span><span class="line"><span class="cl"><span class="s">EOS</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">chmod +x /usr/local/bin/tpm2_unseal_lukskey
+</span></span><span class="line"><span class="cl">chmod +x /etc/initramfs-tools/hooks/tpm2-initramfs-hook
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">cp /etc/crypttab<span class="o">{</span>,.bak<span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="k">$(</span>cut -d<span class="s1">&#39; &#39;</span> -f 1,2 /etc/crypttab<span class="k">)</span> unseal <span class="k">$(</span>cut -d<span class="s1">&#39; &#39;</span> -f <span class="m">4</span> /etc/crypttab <span class="k">)</span>,keyscript<span class="o">=</span>/usr/local/bin/tpm2_unseal_lukskey &gt; /etc/crypttab
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="セキュアブート鍵の作成">セキュアブート鍵の作成</h2>
+<p>セキュアブートに使用するを作成しておきます。
+ここは環境による差分が無いので、コマンドをそのまま貼り付けて実行して大丈夫です。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mkdir /root/secureboot
+</span></span><span class="line"><span class="cl">cd /root/secureboot
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">uuidgen --random &gt; GUID.txt
+</span></span><span class="line"><span class="cl">openssl req -newkey rsa:4096 -nodes -keyout PK.key -new -x509 -sha256 -days 3650 -subj &#34;/CN=Platform Key/&#34; -out PK.crt
+</span></span><span class="line"><span class="cl">openssl x509 -outform DER -in PK.crt -out PK.cer
+</span></span><span class="line"><span class="cl">cert-to-efi-sig-list -g &#34;$(&lt; GUID.txt)&#34; PK.crt PK.esl
+</span></span><span class="line"><span class="cl">sign-efi-sig-list -g &#34;$(&lt; GUID.txt)&#34; -k PK.key -c PK.crt PK PK.esl PK.auth
+</span></span><span class="line"><span class="cl">sign-efi-sig-list -g &#34;$(&lt; GUID.txt)&#34; -c PK.crt -k PK.key PK /dev/null rm_PK.auth
+</span></span><span class="line"><span class="cl">openssl req -newkey rsa:4096 -nodes -keyout KEK.key -new -x509 -sha256 -days 3650 -subj &#34;/CN=Key Exchange Key/&#34; -out KEK.crt
+</span></span><span class="line"><span class="cl">openssl x509 -outform DER -in KEK.crt -out KEK.cer
+</span></span><span class="line"><span class="cl">cert-to-efi-sig-list -g &#34;$(&lt; GUID.txt)&#34; KEK.crt KEK.esl
+</span></span><span class="line"><span class="cl">sign-efi-sig-list -g &#34;$(&lt; GUID.txt)&#34; -k PK.key -c PK.crt KEK KEK.esl KEK.auth
+</span></span><span class="line"><span class="cl">openssl req -newkey rsa:4096 -nodes -keyout db.key -new -x509 -sha256 -days 3650 -subj &#34;/CN=Signature Database key/&#34; -out db.crt
+</span></span><span class="line"><span class="cl">openssl x509 -outform DER -in db.crt -out db.cer
+</span></span><span class="line"><span class="cl">cert-to-efi-sig-list -g &#34;$(&lt; GUID.txt)&#34; db.crt db.esl
+</span></span><span class="line"><span class="cl">sign-efi-sig-list -g &#34;$(&lt; GUID.txt)&#34; -k KEK.key -c KEK.crt db db.esl db.auth
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="boot-パーティションの削除">/boot パーティションの削除</h2>
+<p>本稿の手順で Linux を起動するようにすると、/boot 用のパーティションが不要になります（ディストリビューションによっては、最初からESPが /boot だったりしますよね）。
+セキュリティ上の理由から、このパーティションは削除します。
+ここは環境による差分が無いので、コマンドをそのまま貼り付けて実行して大丈夫です。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">umount /boot/efi
+</span></span><span class="line"><span class="cl">mkdir /root/boot_backup
+</span></span><span class="line"><span class="cl">mv /boot/* /root/boot_backup
+</span></span><span class="line"><span class="cl">umount /boot
+</span></span><span class="line"><span class="cl">sed -i.bak -e &#39;/\/boot / s/^#*/#/&#39; -e &#39;s#/boot/efi#/efi#&#39; /etc/fstab
+</span></span><span class="line"><span class="cl">mkdir /efi
+</span></span><span class="line"><span class="cl">mount -a
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="keytoolの準備">KeyToolの準備</h2>
+<p>セキュアブート鍵を UEFI ファームウェアへ登録するツールの KeyTool の使用準備をしておきます。
+本稿の手順では、このパーティションを完全にお掃除する前に、一時的にセキュアブート鍵を置くストレージとして使用します。
+手順としては USB メモリなどリムーバブルメディアを使ったほうがさらに安全性が高まります。</p>
+<p><font color="red">ここは環境による差分があるので注意してください。</font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mkfs.vfat -n SBKEY /dev/nvme0n1p2
+</span></span><span class="line"><span class="cl">mkdir /tmp/sbkey
+</span></span><span class="line"><span class="cl">mount /dev/nvme0n1p2 /tmp/sbkey
+</span></span><span class="line"><span class="cl">cp /root/secureboot/{PK.auth,KEK.esl,db.esl} /tmp/sbkey
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mkdir /efi/EFI/KeyTool
+</span></span><span class="line"><span class="cl">cp /usr/lib/efitools/x86_64-linux-gnu/KeyTool.efi /efi/EFI/KeyTool
+</span></span><span class="line"><span class="cl">efibootmgr --disk /dev/nvme0n1 --part 1 --create --label KeyTool --loader EFI/KeyTool/KeyTool.efi
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>最後のコマンドの実行結果例です。
+PC 起動時、kali 以外に KeyTool も起動できるようになりました。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">BootCurrent: 0000
+</span></span><span class="line"><span class="cl">Timeout: 1 seconds
+</span></span><span class="line"><span class="cl">BootOrder: 0002,0000,000B,000C,0009,000A,0007,0006,0001
+</span></span><span class="line"><span class="cl">Boot0000* kali
+</span></span><span class="line"><span class="cl">Boot0001* Windows Boot Manager
+</span></span><span class="line"><span class="cl">Boot0006* Generic Usb Device
+</span></span><span class="line"><span class="cl">Boot0007* CD/DVD Device
+</span></span><span class="line"><span class="cl">Boot0009  UEFI: PXE IPV4 Network Card
+</span></span><span class="line"><span class="cl">Boot000A  UEFI: PXE IPV6 Network Card
+</span></span><span class="line"><span class="cl">Boot000B* UEFI: PXE IPV4 Intel(R) Ethernet Connection (6) I219-LM
+</span></span><span class="line"><span class="cl">Boot000C* UEFI: PXE IPV6 Intel(R) Ethernet Connection (6) I219-LM
+</span></span><span class="line"><span class="cl">Boot0002* KeyTool
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="unified-kernel-image-の作成">Unified Kernel Image の作成</h2>
+<p>手順の最初の方でやり始めた Linux カーネルのビルドは無事終わりましたでしょうか。
+終わってないと次の手順へは進めないので、DARKMATTER の他の記事を読んで有意義な時間過ごすことをオススメします。</p>
+<p>ビルドが終わっていたら、/root/linux-image に以下のような 3 つの deb パッケージファイルが作成されていると思います。</p>
+<ul>
+<li>linux-headers-5.8.14_5.8.14-1_amd64.deb</li>
+<li>linux-libc-dev_5.8.14-1_amd64.deb</li>
+<li>linux-image-5.8.14_5.8.14-1_amd64.deb</li>
+</ul>
+<p>これらをインストールしつつ、Unified Kernel Image を作成・署名し、KeyTool と同じく EFI ブートエントリーへ登録します。</p>
+<p><font color="red">ここは環境による差分があるので注意してください。パーティションとカーネルリリース番号の部分です。</font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">dpkg -i /root/linux-image/linux-*.deb
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">echo &#34;$(grep -oP &#39;root=\S+&#39; /proc/cmdline) ro cryptdevice=$(cut -d\  -f2 /etc/crypttab):$(cut -d\  -f1 /etc/crypttab) quiet&#34; &gt; /root/secureboot/cmdline.txt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mkdir /efi/EFI/Secure-Kali
+</span></span><span class="line"><span class="cl">objcopy \
+</span></span><span class="line"><span class="cl">  --add-section .osrel=/usr/lib/os-release --change-section-vma .osrel=0x20000 \
+</span></span><span class="line"><span class="cl">  --add-section .cmdline=/root/secureboot/cmdline.txt --change-section-vma .cmdline=0x30000 \
+</span></span><span class="line"><span class="cl">  --add-section .linux=/boot/vmlinuz-5.8.14 --change-section-vma .linux=0x40000 \
+</span></span><span class="line"><span class="cl">  --add-section .initrd=/boot/initrd.img-5.8.14 --change-section-vma .initrd=0x3000000 \
+</span></span><span class="line"><span class="cl">  /usr/lib/systemd/boot/efi/linuxx64.efi.stub /efi/EFI/Secure-Kali/Secure-Kali.efi
+</span></span><span class="line"><span class="cl">sbsign --key /root/secureboot/db.key --cert /root/secureboot/db.crt --output /efi/EFI/Secure-Kali/Secure-Kali.efi /efi/EFI/Secure-Kali/Secure-Kali.efi
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">efibootmgr --disk /dev/nvme0n1 --part 1 --create --label Secure-Kali --loader EFI/Secure-Kali/Secure-Kali.efi
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>最後のコマンドの実行結果例です。
+PC 起動時、作成した Unified Kernel Image も起動できるようになりました（一番下）。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">BootCurrent: 0000
+</span></span><span class="line"><span class="cl">Timeout: 1 seconds
+</span></span><span class="line"><span class="cl">BootOrder: 0003,0002,0000,000B,000C,0009,000A,0007,0006,0001
+</span></span><span class="line"><span class="cl">Boot0000* kali
+</span></span><span class="line"><span class="cl">Boot0001* Windows Boot Manager
+</span></span><span class="line"><span class="cl">Boot0002* KeyTool
+</span></span><span class="line"><span class="cl">Boot0006* Generic Usb Device
+</span></span><span class="line"><span class="cl">Boot0007* CD/DVD Device
+</span></span><span class="line"><span class="cl">Boot0009  UEFI: PXE IPV4 Network Card
+</span></span><span class="line"><span class="cl">Boot000A  UEFI: PXE IPV6 Network Card
+</span></span><span class="line"><span class="cl">Boot000B* UEFI: PXE IPV4 Intel(R) Ethernet Connection (6) I219-LM
+</span></span><span class="line"><span class="cl">Boot000C* UEFI: PXE IPV6 Intel(R) Ethernet Connection (6) I219-LM
+</span></span><span class="line"><span class="cl">Boot0003* Secure-Kali
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="セキュアブートのモードをセットアップモードへ">セキュアブートのモードをセットアップモードへ</h2>
+<p>さて、ここまで来たら全体の作業の 2/3 程度は完了です。
+ここからは UEFI（BIOS）セットアップメニューと KeyTool の操作になります。
+UEFI（BIOS）セットアップメニューの操作は PC 環境依存となりますが、参考までに画像を使って説明します。</p>
+<p>以下の Kali Linux を終了し、UEFI（BIOS）セットアップメニューを開きます。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">systemctl reboot --firmware-setup
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>セキュアブートを有効化します。
+<figure><img src="https://keishitsuboi.github.io/bitlocker/bitlocker4.png"/>
+</figure>
+</p>
+<p>マイクロソフトのセキュアブート鍵を削除し、セットアップモードに入ります。
+後で Windows を入れ直したい方は、ファクトリーキーのリストア（図中だと Restore Factory Keys）が可能なことを確認してから進んでください。
+削除したセキュアブート鍵を戻せなくなる可能性があります。</p>
+<p>また、セットアップモードへ入る操作が無い UEFI ファームウェアの場合は、手動でセキュアブート鍵を削除する必要があります。</p>
+<figure><img src="https://keishitsuboi.github.io/bitlocker/bitlocker5.png"/>
+</figure>
+
+<p>セットアップモードになったところです。</p>
+<figure><img src="https://keishitsuboi.github.io/bitlocker/bitlocker6.png"/>
+</figure>
+
+<p>設定を保存して再起動します。</p>
+<figure><img src="https://keishitsuboi.github.io/bitlocker/bitlocker7.png"/>
+</figure>
+
+<h2 id="セキュアブート鍵の登録">セキュアブート鍵の登録</h2>
+<p>KeyTool を使ってセキュアブート鍵を UEFI ファームウェアへ登録します。
+起動デバイスの選択画面（PC 起動時に F12 キーなど）を表示し、 KeyTool を選択して起動します。</p>
+<h2 id="セキュアブートのモード確認">セキュアブートのモード確認</h2>
+<p>UEFI（BIOS）セットアップメニューを開き、モードが<code>Setup Mode</code>から<code>User Mode</code>へと切り替わったことを確認します。</p>
+<h2 id="カスタムカーネルの起動">カスタムカーネルの起動</h2>
+<p>PC を再起動すると、カスタムカーネル（署名した Unified Kernel Image）の起動が始まります。
+以下のようなエラーメッセージとともにパスフレーズの入力を求められるので、設定した暗号化パスフレーズを入力してカスタムカーネルを起動します。</p>
+<p>以下のようなエラーが表示された場合、セキュアブート鍵の作成、カスタムカーネルの署名、セキュアブート鍵の登録のいずれかがうまくいっていないと考えられます。
+原理的な理解が無いと、どこからやり直せばいいのか判断が難しいです。
+一旦セキュアブートを無効化して起動できるようであれば試行錯誤してみて、駄目そうなら最初からやり直してください。。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Secure Boot Violation
+</span></span><span class="line"><span class="cl">Invalid signature detected.
+</span></span><span class="line"><span class="cl">Check Secure Boot Policy Setup.
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上記エラーは表示されないがパスフレーズの入力を求めるところまで行かないという場合、起動時のログを多めに出さないと何が失敗してるのか判断が難しいです。
+一旦セキュアブートを無効化して起動できるようであれば、cmdline（/root/secureboot/cmdline.txt）へ <code>loglevel=9</code> などと書き、Unified Kernel Image の作成で実施した <code>objcopy</code> と <code>sbsign</code> をやり直し、セキュアブートを有効化して再起動します。
+多くの場合、カーネルモジュールの署名や検証の問題が起きていると思われます。
+Linux カーネルのビルドあたりからやり直すと問題が解決する可能性がありますが、最初からやり直したほうがスッキリするかもしれません。。</p>
+<h2 id="tpm2-へ-luks-パスフレーズを封入">TPM2 へ LUKS パスフレーズを封入</h2>
+<p>無事ここまで到達されたみなさまは、大変おめでとうございます。
+いよいよ本題の Kali Linux で BitLocker ぽいことができます。
+設定したものとは異なるランダムな LUKS パスフレーズを追加後、TPM2 の不揮発性メモリ（NVRAM）へ同じパスフレーズを封入します。
+再起動後、ディスク暗号化のパスフレーズ入力を求められることなく Kali Linux が起動したら成功です。</p>
+<p><font color="red">ここは環境による差分があるので注意してください。</font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">umask 0077
+</span></span><span class="line"><span class="cl">head -c 128 /dev/urandom &gt; /root/luks_passphrase.bin
+</span></span><span class="line"><span class="cl">cryptsetup luksAddKey /dev/nvme0n1p3 /root/luks_passphrase.bin
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mkdir /tmp/tpm2
+</span></span><span class="line"><span class="cl">cd /tmp/tpm2
+</span></span><span class="line"><span class="cl">tpm2_evictcontrol --hierarchy o --object-context 0x81000000
+</span></span><span class="line"><span class="cl">tpm2_pcrread --output /root/pcrs.bin sha256:0,2,4,7
+</span></span><span class="line"><span class="cl">tpm2_createpolicy --policy-pcr --policy pcr.policy --pcr-list sha256:0,2,4,7 --pcr /root/pcrs.bin
+</span></span><span class="line"><span class="cl">tpm2_createprimary --hierarchy=o --key-algorithm=ecc --key-context=prim.ctx
+</span></span><span class="line"><span class="cl">tpm2_create --hash-algorithm sha256 --public seal.pub --private seal.priv --sealing-input /root/luks_passphrase.bin --parent-context prim.ctx --policy pcr.policy
+</span></span><span class="line"><span class="cl">tpm2_load --parent-context prim.ctx --public seal.pub --private seal.priv --key-context seal.ctx
+</span></span><span class="line"><span class="cl">tpm2_evictcontrol --hierarchy o --object-context seal.ctx 0x81000000
+</span></span><span class="line"><span class="cl">tpm2_flushcontext --saved-session
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">systemctl reboot
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="お掃除">お掃除</h2>
+<p>不要なファイルや EFI エントリーを削除、/boot だったパーティションを削除します。
+システムをセキュアに保つために重要な作業です。</p>
+<p><font color="red">ここは環境による差分があるので注意してください。</font></p>
+<p>不要な EFI バイナリ削除</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">rm -rf /efi/EFI/KeyTool
+</span></span><span class="line"><span class="cl">rm -rf /efi/EFI/kali
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>不要な EFI エントリーの番号を取得</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">efibootmgr | egrep &#39;kali|KeyTool&#39;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>本稿の環境では <code>0000</code> および <code>0002</code> でした。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Boot0000* kali
+</span></span><span class="line"><span class="cl">Boot0002* KeyTool
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>これらを削除。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">efibootmgr --delete-bootnum --bootnum 0000
+</span></span><span class="line"><span class="cl">efibootmgr --delete-bootnum --bootnum 0002
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>/boot だったパーティションへランダムなデータを上書きして削除</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">shred /dev/nvme0n1p2
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="セキュアブート状態の確認">セキュアブート状態の確認</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># od --address-radix=n --format=u1 /sys/firmware/efi/efivars/SecureBoot-*
+</span></span><span class="line"><span class="cl">   6   0   0   0   1 &lt;= 最後の数字が 1 だったらセキュアブート
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># bootctl status
+</span></span><span class="line"><span class="cl">systemd-boot not installed in ESP.
+</span></span><span class="line"><span class="cl">No default/fallback boot loader installed in ESP.
+</span></span><span class="line"><span class="cl">System:
+</span></span><span class="line"><span class="cl">     Firmware: UEFI 2.70 (American Megatrends 5.13)
+</span></span><span class="line"><span class="cl">  Secure Boot: enabled &lt;= セキュアブートが有効
+</span></span><span class="line"><span class="cl">   Setup Mode: user &lt;= User Modeであることが確認できる
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Current Boot Loader:
+</span></span><span class="line"><span class="cl">      Product: n/a
+</span></span><span class="line"><span class="cl">     Features: ✗ Boot counting
+</span></span><span class="line"><span class="cl">               ✗ Menu timeout control
+</span></span><span class="line"><span class="cl">               ✗ One-shot menu timeout control
+</span></span><span class="line"><span class="cl">               ✗ Default entry control
+</span></span><span class="line"><span class="cl">               ✗ One-shot entry control
+</span></span><span class="line"><span class="cl">               ✗ Support for XBOOTLDR partition
+</span></span><span class="line"><span class="cl">               ✗ Support for passing random seed to OS
+</span></span><span class="line"><span class="cl">               ✓ Boot loader sets ESP partition information
+</span></span><span class="line"><span class="cl">         Stub: systemd-stub 245.6-1
+</span></span><span class="line"><span class="cl">          ESP: /dev/disk/by-partuuid/93a0e4c0-9adb-42c7-81fc-5f4fbd5b63d0
+</span></span><span class="line"><span class="cl">         File: └─EFI/Secure-Kali/Secure-Kali.efi
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Random Seed:
+</span></span><span class="line"><span class="cl"> Passed to OS: no
+</span></span><span class="line"><span class="cl"> System Token: not set
+</span></span><span class="line"><span class="cl">       Exists: no
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Available Boot Loaders on ESP:
+</span></span><span class="line"><span class="cl">          ESP: /efi (/dev/disk/by-partuuid/93a0e4c0-9adb-42c7-81fc-5f4fbd5b63d0)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Boot Loaders Listed in EFI Variables:
+</span></span><span class="line"><span class="cl">        Title: Secure-Kali
+</span></span><span class="line"><span class="cl">           ID: 0x0003
+</span></span><span class="line"><span class="cl">       Status: active, boot-order
+</span></span><span class="line"><span class="cl">    Partition: /dev/disk/by-partuuid/93a0e4c0-9adb-42c7-81fc-5f4fbd5b63d0
+</span></span><span class="line"><span class="cl">         File: └─EFI/Secure-Kali/Secure-Kali.efi
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Boot Loader Entries:
+</span></span><span class="line"><span class="cl">        $BOOT: /efi (/dev/disk/by-partuuid/93a0e4c0-9adb-42c7-81fc-5f4fbd5b63d0)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">0 entries, no entry could be determined as default.
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="おわりに">おわりに</h2>
+<p>おつかれさまでした。
+最後までうまくいった方はおめでとうございます。
+うまくいかなかった方は次回以降の解説でヒントがつかめると幸いです。</p>
+<p>これよりも難しいことをボタンぽちぽちでよろしくやってくれる BitLocker は本当にすごいですね。</p></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2020-10-26</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="https://keishitsuboi.github.io/bitlocker/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://keishitsuboi.github.io/bitlocker/" data-title="Kali LinuxでBitLocker ~やってみる編 ~" data-via="cyberdefense_jp" data-hashtags="PKI"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://keishitsuboi.github.io/bitlocker/" data-hashtag="PKI"><i class="fab fa-facebook-square fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="https://keishitsuboi.github.io/tags/pki/">PKI</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="https://keishitsuboi.github.io/">Home</a></span>
+        </section>
+    </div>
+
+
+    <div class="post-nav">
+            <a href="https://keishitsuboi.github.io/android10/" class="next" rel="next" title="ファイルベースの暗号化（FBE）されたAndroid10のエミュレータの/data/data/領域をPCで復号してみる">ファイルベースの暗号化（FBE）されたAndroid10のエミュレータの/data/data/領域をPCで復号してみる<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="disqus_thread" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://disqus.com/?ref_noscript">Disqus</a>.
+            </noscript><div id="gitalk" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
+            </noscript><div id="valine" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript><div id="commento"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://commento.io/">Commento</a>.
+            </noscript><div id="utterances"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2016 - 2022</span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://www.cyberdefense.jp/" target="_blank">株式会社サイバーディフェンス研究所｜Cyber Defense Institute Inc.</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.min.css"><link rel="stylesheet" href="https://keishitsuboi.github.io/lib/valine/valine.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.2.0/dist/css/lightgallery.min.css"><script type="text/javascript" src="https://.disqus.com/embed.js" defer></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script><script type="text/javascript" src="https://cdn.commento.io/js/commento.js" defer></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.2.0/dist/js/lightgallery.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lg-thumbnail.js@1.2.0/dist/lg-thumbnail.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lg-zoom.js@1.2.0/dist/lg-zoom.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":10},"comment":{"gitalk":{"admin":[""],"clientID":"","clientSecret":"","id":"2020-10-26T21:29:01+08:00","owner":"","repo":"","title":"Kali LinuxでBitLocker ~やってみる編 ~"},"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":""},"valine":{"appId":"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI","appKey":"WBmoGyJtbqUswvfLh6L8iEBr","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":false,"highlight":true,"lang":"en","pageSize":10,"placeholder":"Your comment ...","recordIP":true,"serverURLs":"https://leancloud.hugoloveit.com","visitor":true}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.en","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"algolia"}};</script><script type="text/javascript" src="https://keishitsuboi.github.io/js/theme.min.js"></script></body>
+</html>
